@@ -1,0 +1,89 @@
+
+rede neural
+    número ajustável de neurônios e camadas
+    treinamento com backpropagation
+    uma entrada de bias em cada neurônio
+    (opcional) usar técnicas de vetorização: saídas, custo, gradientes
+
+    normalização de atributos de treinamento
+    regularização -> cuidado com atualização dos neurônios de bias
+
+verificação de corretude
+    $ ./backpropagation network.txt initial_weights.txt dataset.txt
+
+    network.txt
+        primeira linha: fator de regularização (lambda)
+        demais linhas: número de neurônios de cada camada
+            camadas ordenadas da entrada para a saída
+            números não incluem os neurônios de bias
+
+    initial_weights.txt
+        uma camada por linha
+        neurônios separados por ponto-e-vírgula
+        para cada neurônio, pesos separados por vírgula
+        primeiro peso de cada neurônio é o peso de bias
+
+    dataset.txt
+        uma instância de treinamento por linha:
+            atributos separados por vírgula,
+            ponto-e-vírgula,
+            saídas separadas por vírgula
+
+    saída
+        mesmo formato de initial_weights.txt + gradiente de cada peso
+        gradientes com 5 casas decimais
+
+    calcular gradientes por backpropagation
+    calcular gradientes numéricos
+    calcular diferenças entre os 2 métodos?
+
+treinamento
+    treinar rede e avaliar performance, para cada dataset
+        pima
+        wine
+        ionosphere
+        (pontos extras) wdbc
+
+    validação cruzada estratificada, k = 10 folds
+    F1-measure
+
+    ajuste do número de camadas e neurônios
+    ajuste do fator de regularização (lambda)
+
+    (recomendado) usar mini-batches, tamanho escolhido pelo grupo
+    (+) método do momentum
+
+relatório
+    características gerais da implementação
+        (+) pré-processamentos realizados nos datasets
+        como os pesos são armazenados
+        como é feita a propagação da entrada para produzir a saída
+        detalhes de possíveis otimizações
+        método de normalização utilizado em cada conjunto de dados
+        (+) overview de cada arquivo-fonte da implementação
+        (+) formato das saídas geradas
+        (+) explicitar uso de estratificação
+        etc
+
+    linhas de comando para funções de verificação 
+
+    gráficos/tabelas
+        desempenho para cada dataset, para diferentes redes e lambdas
+        (+) intervalo e desvio padrão para cada ponto, não só a média
+        (+) gráficos dos desvios-padrão
+        escolher os melhores parâmetros para cada dataset
+            usar essa rede para gerar gráfico de desempenho:
+            custo J em função do número de exemplos apresentados
+
+    citar toda e qualquer fonte consultada
+        estudo dos métodos utilizados
+        estruturação em pseudo-código
+        etc
+
+entrega
+    código fonte
+    relatório em PDF
+    (+) arquivo "leia-me.txt" com instruções de uso
+
+----
+(+): ideias adicionais, fora da especificação
