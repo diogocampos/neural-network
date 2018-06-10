@@ -17,3 +17,13 @@ class NeuralNetwork:
             assert theta.shape == (num_neurons, num_inputs_per_neuron)
 
         self.weights = weights
+
+
+    def propagate(self, features):
+        activations = features.T
+        for theta in self.weights:
+            bias = np.ones(activations.shape[1])
+            a = np.vstack((bias, activations))
+            z = theta.dot(a)
+            activations = 1.0 / (1.0 + np.exp(-z))
+        return activations.T

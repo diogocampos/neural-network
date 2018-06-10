@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 
+
 EXAMPLES = [
     {
         'name': 'exemplo1',
@@ -12,6 +13,10 @@ EXAMPLES = [
         'dataset': [
             [[0.13], [0.9]],
             [[0.42], [0.23]],
+        ],
+        'activations': [
+            [0.79403],
+            [0.79597],
         ],
     },
     {
@@ -26,8 +31,13 @@ EXAMPLES = [
             [[0.32, 0.68], [0.75, 0.98]],
             [[0.83, 0.02], [0.75, 0.28]],
         ],
+        'activations': [
+            [0.83318, 0.84132],
+            [0.82953, 0.83832],
+        ],
     },
 ]
+
 
 @pytest.fixture(params=EXAMPLES)
 def example(request):
