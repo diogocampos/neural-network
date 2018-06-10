@@ -15,3 +15,11 @@ def test_structure(example):
     regularization, structure = example['network']
     network = NeuralNetwork(regularization, structure)
     assert list(network.structure) == structure
+
+
+def test_set_weights(example):
+    network = NeuralNetwork(*example['network'])
+    network.set_weights(example['weights'])
+
+    weights = [theta.tolist() for theta in network.weights]
+    assert weights == example['weights']

@@ -13,12 +13,12 @@ def parse_weights_file(filename):
     with open(filename, 'r') as file:
         lines = file.readlines()
 
-    layers = []
+    thetas = []
     for line in lines:
         neurons = [neuron.split(',') for neuron in line.split(';')]
-        layer = [[float(weight) for weight in neuron] for neuron in neurons]
-        layers.append(layer)
-    return layers
+        theta = [[float(weight) for weight in neuron] for neuron in neurons]
+        thetas.append(theta)
+    return thetas
 
 
 def parse_dataset_file(filename):
