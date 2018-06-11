@@ -29,10 +29,10 @@ class NeuralNetwork:
 
     def propagate(self, features):
         # Calcula as ativações da rede para um conjunto de instâncias.
-        # - features: matriz de atributos de instância (uma instância por linha)
-        # Retorna uma matriz com as ativações (uma instância por linha).
+        # - features: matriz de atributos de instância (instâncias nas colunas)
+        # Retorna uma matriz com as ativações (uma instância por coluna).
 
-        activations = features.T
+        activations = features
 
         for theta in self.weights:
             bias = np.ones(activations.shape[1])
@@ -40,19 +40,19 @@ class NeuralNetwork:
             z = theta.dot(a)
             activations = 1.0 / (1.0 + np.exp(-z))
 
-        return activations.T
+        return activations
 
 
     def total_error(self, outputs, activations):
         # Calcula o erro total (J), com regularização.
-        # - outputs: matriz de saídas esperadas pelo dataset
-        # - activations: matriz de saídas preditas pela rede
+        # - outputs: matriz de saídas esperadas (instâncias nas colunas)
+        # - activations: matriz de saídas preditas (instâncias nas colunas)
+
+        assert outputs.shape == activations.shape
 
         y = outputs
         f = activations
-        assert y.shape == f.shape
-
-        n = y.shape[0]  # número de instâncias
+        n = y.shape[1]  # número de instâncias
         error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
 
         if self.lambda_ == 0.0:

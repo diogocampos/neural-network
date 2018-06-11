@@ -33,7 +33,7 @@ def test_propagate(example):
     activations = network.propagate(dataset.features)
 
     activations = np.round_(activations, decimals=5)
-    assert activations.tolist() == example['activations']
+    assert activations.T.tolist() == example['activations']
 
 
 def test_total_error(example):
