@@ -51,15 +51,15 @@ class NeuralNetwork:
         return activations
 
 
-    def backpropagate(self, outputs, activations):
+    def backpropagate(self, expectations, activations):
         # Calcula os gradientes finais para um conjunto de instâncias.
-        # - outputs: matriz de saídas esperadas (uma instância por coluna)
+        # - expectations: matriz de saídas esperadas (instâncias nas colunas)
         # - activations: lista de matrizes das ativações dos neurônios
         #     (mesmo formato da saída do método `propagate`)
         # Retorna uma lista de matrizes de gradientes, com o mesmo formato que
         # a lista de matrizes dos pesos da rede.
 
-        y = outputs
+        y = expectations
         f = activations[-1]
         assert y.shape == f.shape
 
@@ -89,12 +89,12 @@ class NeuralNetwork:
         return gradients
 
 
-    def total_error(self, outputs, predictions):
+    def total_error(self, expectations, predictions):
         # Calcula o erro total (J), com regularização.
-        # - outputs: matriz de saídas esperadas (instâncias nas colunas)
+        # - expectations: matriz de saídas esperadas (instâncias nas colunas)
         # - predictions: matriz de saídas preditas (instâncias nas colunas)
 
-        y = outputs
+        y = expectations
         f = predictions
         assert y.shape == f.shape
 

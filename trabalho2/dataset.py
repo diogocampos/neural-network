@@ -10,4 +10,4 @@ class Dataset:
 
         # as matrizes são armazenadas transpostas (instâncias nas colunas)
         self.features = np.array([i[0] for i in instances]).T
-        self.outputs = np.array([i[1] for i in instances]).T
+        self.expectations = np.array([i[1] for i in instances]).T

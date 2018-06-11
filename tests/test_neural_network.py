@@ -43,7 +43,7 @@ def test_backpropagate(example):
 
     dataset = Dataset(example['dataset'])
     activations = network.propagate(dataset.features)
-    gradients = network.backpropagate(dataset.outputs, activations)
+    gradients = network.backpropagate(dataset.expectations, activations)
 
     gradients = [np.round_(g, decimals=5) for g in gradients]
     gradients = [g.tolist() for g in gradients]
@@ -56,6 +56,6 @@ def test_total_error(example):
 
     dataset = Dataset(example['dataset'])
     activations = network.propagate(dataset.features)
-    total_error = network.total_error(dataset.outputs, activations[-1])
+    total_error = network.total_error(dataset.expectations, activations[-1])
 
     assert round(total_error, 5) == example['total_error']

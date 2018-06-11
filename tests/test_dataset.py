@@ -7,7 +7,7 @@ def test_features(example):
     assert dataset.features.T.tolist() == [i[0] for i in instances]
 
 
-def test_outputs(example):
+def test_expectations(example):
     instances = example['dataset']
     dataset = Dataset(instances)
-    assert dataset.outputs.T.tolist() == [i[1] for i in instances]
+    assert dataset.expectations.T.tolist() == [i[1] for i in instances]
