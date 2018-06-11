@@ -37,6 +37,19 @@ def test_propagate(example):
     assert activations == example['activations']
 
 
+def test_backpropagate(example):
+    network = NeuralNetwork(*example['network'])
+    network.set_weights(example['weights'])
+
+    dataset = Dataset(example['dataset'])
+    activations = network.propagate(dataset.features)
+    gradients = network.backpropagate(dataset.outputs, activations)
+
+    gradients = [np.round_(g, decimals=5) for g in gradients]
+    gradients = [g.tolist() for g in gradients]
+    assert gradients == example['gradients']
+
+
 def test_total_error(example):
     network = NeuralNetwork(*example['network'])
     network.set_weights(example['weights'])

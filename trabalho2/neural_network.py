@@ -51,15 +51,53 @@ class NeuralNetwork:
         return activations
 
 
+    def backpropagate(self, outputs, activations):
+        # Calcula os gradientes finais para um conjunto de instâncias.
+        # - outputs: matriz de saídas esperadas (uma instância por coluna)
+        # - activations: lista de matrizes das ativações dos neurônios
+        #     (mesmo formato da saída do método `propagate`)
+        # Retorna uma lista de matrizes de gradientes, com o mesmo formato que
+        # a lista de matrizes dos pesos da rede.
+
+        y = outputs
+        f = activations[-1]
+        assert y.shape == f.shape
+
+        n = y.shape[1]  # número de instâncias
+        delta = f - y
+        gradients = []
+
+        for i in range(len(self.weights) - 1, -1, -1):
+            theta = self.weights[i]
+            a = activations[i]
+
+            gradient = delta.dot(a.T)
+            delta = theta.T.dot(delta) * a * (1.0 - a)
+            delta = delta[1:]  # descarta a primeira linha
+
+            if self.lambda_ == 0.0:
+                regularization = 0.0
+            else:
+                temp = np.array(theta)
+                temp[:, 0] = 0.0  # zera a primeira coluna
+                regularization = self.lambda_ * temp
+
+            gradient = (gradient + regularization) / n
+            gradients.append(gradient)
+
+        gradients.reverse()
+        return gradients
+
+
     def total_error(self, outputs, predictions):
         # Calcula o erro total (J), com regularização.
         # - outputs: matriz de saídas esperadas (instâncias nas colunas)
         # - predictions: matriz de saídas preditas (instâncias nas colunas)
 
-        assert outputs.shape == predictions.shape
-
         y = outputs
         f = predictions
+        assert y.shape == f.shape
+
         n = y.shape[1]  # número de instâncias
         error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
 
