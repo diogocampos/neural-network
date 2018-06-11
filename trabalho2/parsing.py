@@ -1,5 +1,8 @@
 
 def parse_network_file(filename):
+    # Faz a leitura de arquivos do tipo network.txt.
+    # Retorna o fator de regularização e a lista de tamanhos das camadas.
+
     with open(filename, 'r') as file:
         regularization = file.readline()
         structure = file.readlines()
@@ -10,6 +13,10 @@ def parse_network_file(filename):
 
 
 def parse_weights_file(filename):
+    # Faz a leitura de arquivos do tipo initial_weights.txt.
+    # Retorna uma lista de matrizes theta.
+    # (cada linha de uma matriz tem os pesos de um neurônio, incluindo o bias)
+
     with open(filename, 'r') as file:
         lines = file.readlines()
 
@@ -22,6 +29,10 @@ def parse_weights_file(filename):
 
 
 def parse_dataset_file(filename):
+    # Faz a leitura de arquivos do tipo dataset.txt.
+    # Retorna uma lista de instâncias de treinamento.
+    # (cada instância é uma lista de duas sub-listas: atributos e saídas)
+
     with open(filename, 'r') as file:
         lines = file.readlines()
 
