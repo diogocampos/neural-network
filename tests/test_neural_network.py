@@ -34,3 +34,14 @@ def test_propagate(example):
 
     activations = np.round_(activations, decimals=5)
     assert activations.tolist() == example['activations']
+
+
+def test_total_error(example):
+    network = NeuralNetwork(*example['network'])
+    network.set_weights(example['weights'])
+
+    dataset = Dataset(example['dataset'])
+    activations = network.propagate(dataset.features)
+    total_error = network.total_error(dataset.outputs, activations)
+
+    assert round(total_error, 5) == example['total_error']

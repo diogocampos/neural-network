@@ -41,3 +41,26 @@ class NeuralNetwork:
             activations = 1.0 / (1.0 + np.exp(-z))
 
         return activations.T
+
+
+    def total_error(self, outputs, activations):
+        # Calcula o erro total (J), com regularização.
+        # - outputs: matriz de saídas esperadas pelo dataset
+        # - activations: matriz de saídas preditas pela rede
+
+        y = outputs
+        f = activations
+        assert y.shape == f.shape
+
+        n = y.shape[0]  # número de instâncias
+        error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
+
+        if self.lambda_ == 0.0:
+            regularization = 0.0
+        else:
+            # cálculo da regularização, sem os pesos de bias (primeira coluna)
+            weights = [theta[:, 1:] for theta in self.weights]
+            sum_squares = sum(np.sum(np.square(theta)) for theta in weights)
+            regularization = sum_squares * self.lambda_ / (2.0 * n)
+
+        return error + regularization
