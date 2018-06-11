@@ -31,7 +31,7 @@ def parse_weights_file(filename):
 def parse_dataset_file(filename):
     # Faz a leitura de arquivos do tipo dataset.txt.
     # Retorna uma lista de instâncias de treinamento.
-    # (cada instância é uma lista de duas sub-listas: atributos e saídas)
+    # (cada instância é uma tupla de duas listas: atributos e saídas esperadas)
 
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -41,5 +41,5 @@ def parse_dataset_file(filename):
         features, outputs = [values.split(',') for values in line.split(';')]
         features = [float(value) for value in features]
         outputs = [float(value) for value in outputs]
-        instances.append([features, outputs])
+        instances.append((features, outputs))
     return instances
