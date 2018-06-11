@@ -32,8 +32,9 @@ def test_propagate(example):
     dataset = Dataset(example['dataset'])
     activations = network.propagate(dataset.features)
 
-    activations = np.round_(activations, decimals=5)
-    assert activations.T.tolist() == example['activations']
+    activations = [np.round_(a, decimals=5) for a in activations]
+    activations = [a.T.tolist() for a in activations]
+    assert activations == example['activations']
 
 
 def test_total_error(example):
@@ -42,6 +43,6 @@ def test_total_error(example):
 
     dataset = Dataset(example['dataset'])
     activations = network.propagate(dataset.features)
-    total_error = network.total_error(dataset.outputs, activations)
+    total_error = network.total_error(dataset.outputs, activations[-1])
 
     assert round(total_error, 5) == example['total_error']

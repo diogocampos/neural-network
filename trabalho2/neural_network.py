@@ -30,28 +30,36 @@ class NeuralNetwork:
     def propagate(self, features):
         # Calcula as ativações da rede para um conjunto de instâncias.
         # - features: matriz de atributos de instância (instâncias nas colunas)
-        # Retorna uma matriz com as ativações (uma instância por coluna).
+        # Retorna uma lista de matrizes com as ativações de cada camada.
+        #   * uma matriz por camada da rede, incluindo as entradas
+        #   * cada coluna tem as ativações da camada para uma instância
+        #   * todas as matrizes incluem uma linha de bias, menos a última
 
-        activations = features
+        a = features
+        activations = []
 
         for theta in self.weights:
-            bias = np.ones(activations.shape[1])
-            a = np.vstack((bias, activations))
-            z = theta.dot(a)
-            activations = 1.0 / (1.0 + np.exp(-z))
+            # adiciona a linha dos neurônios de bias
+            bias = np.ones(a.shape[1])
+            a = np.vstack((bias, a))
+            activations.append(a)
 
+            z = theta.dot(a)
+            a = 1.0 / (1.0 + np.exp(-z))
+
+        activations.append(a)
         return activations
 
 
-    def total_error(self, outputs, activations):
+    def total_error(self, outputs, predictions):
         # Calcula o erro total (J), com regularização.
         # - outputs: matriz de saídas esperadas (instâncias nas colunas)
-        # - activations: matriz de saídas preditas (instâncias nas colunas)
+        # - predictions: matriz de saídas preditas (instâncias nas colunas)
 
-        assert outputs.shape == activations.shape
+        assert outputs.shape == predictions.shape
 
         y = outputs
-        f = activations
+        f = predictions
         n = y.shape[1]  # número de instâncias
         error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
 
