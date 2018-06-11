@@ -3,12 +3,12 @@ import numpy as np
 
 class NeuralNetwork:
 
-    def __init__(self, regularization, structure):
+    def __init__(self, lambda_, structure):
         # Inicializa uma rede neural.
-        # - regularization: fator de regularização
+        # - lambda_: fator de regularização
         # - structure: lista dos tamanhos de cada camada da rede
 
-        self.regularization = regularization
+        self.lambda_ = lambda_
         self.structure = tuple(structure)
 
 

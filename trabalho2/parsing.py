@@ -4,12 +4,12 @@ def parse_network_file(filename):
     # Retorna o fator de regularização e a lista de tamanhos das camadas.
 
     with open(filename, 'r') as file:
-        regularization = file.readline()
+        lambda_ = file.readline()
         structure = file.readlines()
 
-    regularization = float(regularization)
+    lambda_ = float(lambda_)
     structure = [int(layer_size) for layer_size in structure]
-    return regularization, structure
+    return lambda_, structure
 
 
 def parse_weights_file(filename):

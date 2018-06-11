@@ -5,15 +5,15 @@ from trabalho2.dataset import Dataset
 from trabalho2.neural_network import NeuralNetwork
 
 
-def test_regularization(example):
-    regularization, structure = example['network']
-    network = NeuralNetwork(regularization, structure)
-    assert network.regularization == regularization
+def test_lambda_(example):
+    lambda_, structure = example['network']
+    network = NeuralNetwork(lambda_, structure)
+    assert network.lambda_ == lambda_
 
 
 def test_structure(example):
-    regularization, structure = example['network']
-    network = NeuralNetwork(regularization, structure)
+    lambda_, structure = example['network']
+    network = NeuralNetwork(lambda_, structure)
     assert list(network.structure) == structure
 
 
