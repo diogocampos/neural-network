@@ -56,8 +56,8 @@ class NeuralNetwork:
         # - expectations: matriz de saídas esperadas (instâncias nas colunas)
         # - activations: lista de matrizes das ativações dos neurônios
         #     (mesmo formato da saída do método `propagate`)
-        # Retorna uma lista de matrizes de gradientes, com o mesmo formato que
-        # a lista de matrizes dos pesos da rede.
+        # Retorna uma lista de matrizes com os gradientes de cada camada,
+        # com o mesmo formato que a lista de matrizes dos pesos da rede.
 
         y = expectations
         f = activations[-1]
@@ -86,6 +86,31 @@ class NeuralNetwork:
             gradients.append(gradient)
 
         gradients.reverse()
+        return gradients
+
+
+    def numeric_gradients(self, dataset, epsilon=1e-6):
+        # Calcula estimativas numéricas dos gradientes.
+        # Retorna uma lista de matrizes com os gradientes de cada camada,
+        # com o mesmo formato que a lista de matrizes dos pesos da rede.
+
+        gradients = [np.empty(theta.shape) for theta in self.weights]
+
+        for t, theta in enumerate(self.weights):
+            for n, neuron in enumerate(theta):
+                for w, weight in enumerate(neuron):
+
+                    self.weights[t][n, w] = weight + epsilon
+                    activations = self.propagate(dataset.features)
+                    j2 = self.total_error(dataset.expectations, activations[-1])
+
+                    self.weights[t][n, w] = weight - epsilon
+                    activations = self.propagate(dataset.features)
+                    j1 = self.total_error(dataset.expectations, activations[-1])
+
+                    gradients[t][n, w] = (j2 - j1) / (2.0 * epsilon)
+                    self.weights[t][n, w] = weight
+
         return gradients
 
 

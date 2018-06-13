@@ -44,6 +44,14 @@ def test_backpropagate(example):
     assert gradients == example['gradients']
 
 
+def test_numeric_gradients(example):
+    network, dataset = init_network_and_dataset(example)
+    numeric_gradients = network.numeric_gradients(dataset, epsilon=1e-6)
+
+    numeric_gradients = round_matrixes(numeric_gradients, decimals=5)
+    assert numeric_gradients == example['gradients']
+
+
 def test_total_error(example):
     network, dataset = init_network_and_dataset(example)
     activations = network.propagate(dataset.features)
