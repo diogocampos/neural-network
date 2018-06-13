@@ -51,7 +51,7 @@ class NeuralNetwork:
         return activations
 
 
-    def backpropagate(self, expectations, activations):
+    def _backpropagate(self, expectations, activations):
         # Calcula os gradientes finais para um conjunto de instâncias.
         # - expectations: matriz de saídas esperadas (instâncias nas colunas)
         # - activations: lista de matrizes das ativações dos neurônios
@@ -86,6 +86,16 @@ class NeuralNetwork:
             gradients.append(gradient)
 
         gradients.reverse()
+        return gradients
+
+
+    def gradients(self, dataset):
+        # Calcula os gradientes por backpropagation.
+        # Retorna uma lista de matrizes com os gradientes de cada camada,
+        # com o mesmo formato que a lista de matrizes dos pesos da rede.
+
+        activations = self.propagate(dataset.features)
+        gradients = self._backpropagate(dataset.expectations, activations)
         return gradients
 
 

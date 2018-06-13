@@ -35,10 +35,9 @@ def test_propagate(example):
     assert activations == example['activations']
 
 
-def test_backpropagate(example):
+def test_gradients(example):
     network, dataset = init_network_and_dataset(example)
-    activations = network.propagate(dataset.features)
-    gradients = network.backpropagate(dataset.expectations, activations)
+    gradients = network.gradients(dataset)
 
     gradients = round_matrixes(gradients, decimals=5)
     assert gradients == example['gradients']
