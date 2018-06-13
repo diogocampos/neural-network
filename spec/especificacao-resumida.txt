@@ -35,7 +35,6 @@ verificação de corretude
 
     calcular gradientes por backpropagation
     calcular gradientes numéricos
-    calcular diferenças entre os 2 métodos?
 
 treinamento
     treinar rede e avaliar performance, para cada dataset
@@ -65,7 +64,7 @@ relatório
         (+) explicitar uso de estratificação
         etc
 
-    linhas de comando para funções de verificação 
+    instruções de uso dos scripts de verificação
 
     gráficos/tabelas
         desempenho para cada dataset, para diferentes redes e lambdas

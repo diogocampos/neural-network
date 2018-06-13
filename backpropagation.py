@@ -10,7 +10,14 @@ from trabalho2.neural_network import NeuralNetwork
 USAGE = 'Uso:  $ %s NETWORK_FILE WEIGHTS_FILE DATASET_FILE'
 
 
-def main(argv):
+def backpropagation(network, dataset):
+    return network.gradients(dataset)
+
+def numeric_verification(network, dataset):
+    return network.numeric_gradients(dataset)
+
+
+def main(argv, calculate_gradients=backpropagation):
     try:
         network_file, weights_file, dataset_file = argv[1:]
     except ValueError:
@@ -21,8 +28,8 @@ def main(argv):
     network.set_weights(parsing.parse_weights_file(weights_file))
     dataset = Dataset(parsing.parse_dataset_file(dataset_file))
 
-    # Calcula os gradientes por backpropagation
-    gradients = network.gradients(dataset)
+    # Calcula os gradientes usando a função fornecida
+    gradients = calculate_gradients(network, dataset)
 
     # Imprime as matrizes de gradientes, uma matriz (camada) por linha:
     # - linhas separadas por ponto-e-vírgula
