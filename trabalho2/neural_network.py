@@ -29,38 +29,38 @@ class NeuralNetwork:
 
     def propagate(self, features):
         # Calcula as ativações da rede para um conjunto de instâncias.
-        # - features: matriz de atributos de instância (instâncias nas colunas)
+        # - features: matriz de atributos de instância (instâncias nas linhas)
         # Retorna uma lista de matrizes com as ativações de cada camada.
         #   * uma matriz por camada da rede, incluindo as entradas
-        #   * cada coluna tem as ativações da camada para uma instância
-        #   * todas as matrizes incluem uma linha de bias, menos a última
+        #   * cada linha tem as ativações da camada para uma instância
+        #   * todas as matrizes (menos a última) incluem uma coluna de bias
 
-        a = features
+        a = features.T
         activations = []
 
         for theta in self.weights:
-            # adiciona a linha dos neurônios de bias
+            # adiciona os neurônios de bias
             bias = np.ones(a.shape[1])
             a = np.vstack((bias, a))
-            activations.append(a)
+            activations.append(a.T)
 
             z = theta.dot(a)
             a = 1.0 / (1.0 + np.exp(-z))
 
-        activations.append(a)
+        activations.append(a.T)
         return activations
 
 
     def _backpropagate(self, expectations, activations):
         # Calcula os gradientes finais para um conjunto de instâncias.
-        # - expectations: matriz de saídas esperadas (instâncias nas colunas)
+        # - expectations: matriz de saídas esperadas (instâncias nas linhas)
         # - activations: lista de matrizes das ativações dos neurônios
         #     (mesmo formato da saída do método `propagate`)
         # Retorna uma lista de matrizes com os gradientes de cada camada,
         # com o mesmo formato que a lista de matrizes dos pesos da rede.
 
-        y = expectations
-        f = activations[-1]
+        y = expectations.T
+        f = activations[-1].T
         assert y.shape == f.shape
 
         n = y.shape[1]  # número de instâncias
@@ -69,11 +69,11 @@ class NeuralNetwork:
 
         for i in range(len(self.weights) - 1, -1, -1):
             theta = self.weights[i]
-            a = activations[i]
+            a = activations[i].T
 
             gradient = delta.dot(a.T)
             delta = theta.T.dot(delta) * a * (1.0 - a)
-            delta = delta[1:]  # descarta a primeira linha
+            delta = delta[1:]  # descarta a primeira linha (bias)
 
             if self.lambda_ == 0.0:
                 regularization = 0.0
@@ -126,11 +126,11 @@ class NeuralNetwork:
 
     def total_error(self, expectations, predictions):
         # Calcula o erro total (J), com regularização.
-        # - expectations: matriz de saídas esperadas (instâncias nas colunas)
-        # - predictions: matriz de saídas preditas (instâncias nas colunas)
+        # - expectations: matriz de saídas esperadas (instâncias nas linhas)
+        # - predictions: matriz de saídas preditas (instâncias nas linhas)
 
-        y = expectations
-        f = predictions
+        y = expectations.T
+        f = predictions.T
         assert y.shape == f.shape
 
         n = y.shape[1]  # número de instâncias

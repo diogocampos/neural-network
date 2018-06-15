@@ -8,6 +8,5 @@ class Dataset:
         # - instances: lista de instâncias de treinamento
         # (cada instância é uma tupla de duas listas: atributos e saídas)
 
-        # as matrizes são armazenadas transpostas (instâncias nas colunas)
-        self.features = np.array([i[0] for i in instances]).T
-        self.expectations = np.array([i[1] for i in instances]).T
+        self.features = np.array([i[0] for i in instances])
+        self.expectations = np.array([i[1] for i in instances])

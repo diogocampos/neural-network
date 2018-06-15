@@ -31,7 +31,7 @@ def test_propagate(example):
     network, dataset = init_network_and_dataset(example)
     activations = network.propagate(dataset.features)
 
-    activations = round_matrixes(activations, decimals=5, transpose=True)
+    activations = round_matrixes(activations, decimals=5)
     assert activations == example['activations']
 
 
@@ -77,10 +77,9 @@ def init_network_and_dataset(example):
     return network, dataset
 
 
-def round_matrixes(matrixes, decimals=5, transpose=False):
+def round_matrixes(matrixes, decimals=5):
     # Arredonda os valores dos elementos de uma lista de arrays NumPy.
 
     matrixes = [np.round_(m, decimals=decimals) for m in matrixes]
-    if transpose: matrixes = [m.T for m in matrixes]
     matrixes = [m.tolist() for m in matrixes]
     return matrixes
