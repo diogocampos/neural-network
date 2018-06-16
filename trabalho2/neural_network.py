@@ -1,5 +1,7 @@
 import numpy as np
 
+from .dataset import join_datasets
+
 
 class NeuralNetwork:
 
@@ -38,6 +40,42 @@ class NeuralNetwork:
 
             theta = np.random.random((num_neurons, num_inputs_per_neuron))
             self.weights.append(theta)
+
+
+    def train(self, batches, alpha=1e-3, momentum=0.9, mindelta=1e-9, skip=100):
+        # Treina a rede neural com um dataset.
+        # - batches: lista de datasets de treinamento
+        # - alpha: taxa de aprendizado
+        # - momentum: fator beta do método do momento
+        # - mindelta: critério de parada (variação mínima do erro total)
+        # - skip: número de iterações entre cada `yield` do erro J
+        # Retorna um gerador que fornece o erro J após cada `skip` iterações.
+
+        self.set_random_weights()
+
+        combined = join_datasets(batches)
+        z = [0 for theta in self.weights]  # método do momento
+        prev_j = -1
+        counter = 0
+
+        while True:
+            for batch in batches:
+                activations = self.propagate(batch.features)
+                gradients = self._backpropagate(batch.expectations, activations)
+
+                # atualiza os pesos
+                for i in range(len(self.weights)):
+                    z[i] = momentum * z[i] + gradients[i]
+                    self.weights[i] -= alpha * z[i]
+
+            activations = self.propagate(combined.features)
+            j = self.total_error(combined.expectations, activations[-1])
+
+            if abs(j - prev_j) < mindelta: yield j; break
+            prev_j = j
+
+            if counter == 0: yield j
+            counter = (counter + 1) % skip
 
 
     def propagate(self, features):
