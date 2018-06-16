@@ -18,20 +18,35 @@ class Dataset:
             self.features = (self.features - minimums) / (maximums - minimums)
 
 
-    def minibatches(self, num_batches):
-        # Divide o dataset em mini-batches.
-        # - num_batches: número desejado de mini-batches
-        # Retorna uma lista de sub-datasets, um para cada mini-batch.
+    def __len__(self):
+        return len(self.features)
 
-        batch_size = math.ceil(len(self.features) / float(num_batches))
-        batches = []
 
-        for i in range(num_batches):
-            start, end = i * batch_size, (i + 1) * batch_size
-            batch = Dataset([])
+    def random_folds(self, num_folds):
+        # Divide o dataset em folds aleatórios estratificados.
+        # - num_folds: número desejado de folds
+        # Retorna uma lista de sub-datasets, um para cada fold.
 
-            batch.features = self.features[start:end]
-            batch.expectations = self.expectations[start:end]
-            batches.append(batch)
+        # reordena o dataset aleatoriamente
+        indexes = np.random.permutation(len(self.features))
+        features = self.features[indexes]
+        expectations = self.expectations[indexes]
 
-        return batches
+        # separa as instâncias em grupos, por classe
+        classes = np.unique(expectations, axis=0)
+        groups = [np.where(np.all(expectations == c, axis=1))[0] for c in classes]
+
+        # divide grupos em `num_folds` pedaços
+        groups = [np.array_split(g, num_folds) for g in groups]
+
+        # forma folds com um pedaço de cada grupo
+        folds = []
+
+        for i in range(num_folds):
+            indexes = np.concatenate([g[i] for g in groups])
+            fold = Dataset([])
+            fold.features = features[indexes]
+            fold.expectations = expectations[indexes]
+            folds.append(fold)
+
+        return folds

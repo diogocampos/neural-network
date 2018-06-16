@@ -26,16 +26,28 @@ def test_normalize():
         [0.25, 1.0],
         [1.00, 0.5],
     ]
-    instances = [(xs, [0.0]) for xs in features]
+    instances = [(xs, [0.]) for xs in features]
     dataset = Dataset(instances, normalize=True)
     assert dataset.features.tolist() == normalized_features
 
 
-@pytest.mark.parametrize('num_instances, num_batches, batch_sizes', [
-    (10, 2, [5, 5]),
-    (8, 3, [3, 3, 2]),
-])
-def test_minibatches(num_instances, num_batches, batch_sizes):
-    dataset = Dataset(num_instances * [([0], [0])])
-    batches = dataset.minibatches(num_batches)
-    assert [len(batch.features) for batch in batches] == batch_sizes
+def test_random_folds():
+    dataset = Dataset([
+        ([0.], [1., 0.]),
+        ([1.], [1., 0.]),
+        ([2.], [1., 0.]),
+        ([3.], [1., 0.]),
+        ([4.], [0., 1.]),
+        ([5.], [0., 1.]),
+        ([6.], [0., 1.]),
+        ([7.], [0., 1.]),
+    ])
+    folds = dataset.random_folds(4)
+
+    assert len(folds) == 4
+    for fold in folds:
+        assert isinstance(fold, Dataset)
+        assert len(fold) == 2
+
+        # cada fold deve ter uma instância de cada classe
+        assert fold.expectations[0].tolist() != fold.expectations[1].tolist()
