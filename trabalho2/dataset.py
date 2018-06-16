@@ -21,6 +21,12 @@ class Dataset:
     def __len__(self):
         return len(self.features)
 
+    def num_inputs(self):
+        return len(self.features[0])
+
+    def num_outputs(self):
+        return len(self.expectations[0])
+
 
     def random_folds(self, num_folds):
         # Divide o dataset em folds aleatórios estratificados.
