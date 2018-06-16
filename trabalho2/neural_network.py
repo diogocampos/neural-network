@@ -175,6 +175,15 @@ class NeuralNetwork:
         return gradients
 
 
+    def evaluate(self, dataset):
+        # Calcula o erro total J da rede neural com instâncias de teste.
+        # - dataset: conjunto de instâncias de teste
+
+        activations = self.propagate(dataset.features)
+        j = self.total_error(dataset.expectations, activations[-1])
+        return j
+
+
     def total_error(self, expectations, predictions):
         # Calcula o erro total (J), com regularização.
         # - expectations: matriz de saídas esperadas (instâncias nas linhas)
