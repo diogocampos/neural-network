@@ -1,6 +1,6 @@
 import pytest
 
-from trabalho2.dataset import Dataset
+from trabalho2.dataset import Dataset, join_datasets
 
 
 def test_features(example):
@@ -51,3 +51,18 @@ def test_random_folds():
 
         # cada fold deve ter uma instância de cada classe
         assert fold.expectations[0].tolist() != fold.expectations[1].tolist()
+
+
+def test_join_datasets():
+    d1 = Dataset([
+        ([0.], [0.]),
+        ([1.], [1.]),
+    ])
+    d2 = Dataset([
+        ([2.], [2.]),
+        ([3.], [3.]),
+    ])
+    combined = join_datasets([d1, d2])
+
+    assert combined.features.tolist() == [[0.], [1.], [2.], [3.]]
+    assert combined.expectations.tolist() == [[0.], [1.], [2.], [3.]]

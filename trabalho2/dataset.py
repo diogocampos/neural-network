@@ -50,3 +50,10 @@ class Dataset:
             folds.append(fold)
 
         return folds
+
+
+def join_datasets(datasets):
+    combined = Dataset([])
+    combined.features = np.concatenate([d.features for d in datasets])
+    combined.expectations = np.concatenate([d.expectations for d in datasets])
+    return combined
