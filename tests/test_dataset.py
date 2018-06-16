@@ -1,3 +1,5 @@
+import pytest
+
 from trabalho2.dataset import Dataset
 
 
@@ -27,3 +29,13 @@ def test_normalize():
     instances = [(xs, [0.0]) for xs in features]
     dataset = Dataset(instances, normalize=True)
     assert dataset.features.tolist() == normalized_features
+
+
+@pytest.mark.parametrize('num_instances, num_batches, batch_sizes', [
+    (10, 2, [5, 5]),
+    (8, 3, [3, 3, 2]),
+])
+def test_minibatches(num_instances, num_batches, batch_sizes):
+    dataset = Dataset(num_instances * [([0], [0])])
+    batches = dataset.minibatches(num_batches)
+    assert [len(batch.features) for batch in batches] == batch_sizes
