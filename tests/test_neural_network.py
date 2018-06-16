@@ -27,6 +27,15 @@ def test_set_weights(example):
     assert weights == example['weights']
 
 
+def test_set_random_weights(example):
+    network = init_network(example)
+    network.set_random_weights()
+
+    shapes = [t.shape for t in network.weights]
+    expected_shapes = [(len(t), len(t[0])) for t in example['weights']]
+    assert shapes == expected_shapes
+
+
 def test_propagate(example):
     network, dataset = init_network_and_dataset(example)
     activations = network.propagate(dataset.features)

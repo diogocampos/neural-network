@@ -27,6 +27,19 @@ class NeuralNetwork:
         self.weights = weights
 
 
+    def set_random_weights(self):
+        # Inicializa os pesos dos neurônios aleatoriamente.
+
+        self.weights = []
+
+        for i in range(len(self.structure) - 1):
+            num_neurons = self.structure[i + 1]
+            num_inputs_per_neuron = self.structure[i] + 1
+
+            theta = np.random.random((num_neurons, num_inputs_per_neuron))
+            self.weights.append(theta)
+
+
     def propagate(self, features):
         # Calcula as ativações da rede para um conjunto de instâncias.
         # - features: matriz de atributos de instância (instâncias nas linhas)
