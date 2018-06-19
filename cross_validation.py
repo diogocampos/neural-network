@@ -23,28 +23,37 @@ def main(argv):
     try:
         dataset_file = argv[1]
     except IndexError:
-        print('Uso:  $ %s DATASET_FILE' % argv[0], file=sys.stderr)
+        print('Usage:  %s DATASET_FILE' % argv[0], file=sys.stderr)
         return 1
 
     instances = parsing.parse_dataset_file(dataset_file)
     dataset = Dataset(instances, normalize=True)
-    folds = dataset.random_folds(NUM_FOLDS)
 
     structure = [dataset.num_inputs()] + HIDDEN_LAYERS + [dataset.num_outputs()]
     network = NeuralNetwork(LAMBDA, structure)
+
+    cross_validation(network, dataset, NUM_FOLDS, **TRAINING_PARAMS)
+
+
+def cross_validation(network, dataset, num_folds, **training_params):
     print('lambda = %r, structure = %r' % (network.lambda_, network.structure))
-    print(', '.join('%s = %r' % (k, v) for k, v in TRAINING_PARAMS.items()))
+    print(', '.join('%s = %r' % (k, v) for k, v in training_params.items()))
+
+    folds = dataset.random_folds(num_folds)
 
     for i in range(len(folds)):
         test_set = folds[i]
         training_sets = folds[:i] + folds[i+1:]
         print('Fold %d/%d:' % (i + 1, len(folds)))
 
-        for jt in network.train(training_sets, **TRAINING_PARAMS):
-            print('  J_t =', jt, end='\r')
+        try:
+            for j_t in network.train(training_sets, **training_params):
+                print('    J_t =', j_t, end='\r')
+        except KeyboardInterrupt:
+            pass
 
-        jcv = network.evaluate(test_set)
-        print('\n  J_cv =', jcv)
+        j_cv = network.evaluate(test_set)
+        print('\n    J_cv =', j_cv)
 
 
 if __name__ == '__main__':
