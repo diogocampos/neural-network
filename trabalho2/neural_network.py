@@ -215,14 +215,22 @@ class NeuralNetwork:
         # - expectations: matriz de saídas esperadas (instâncias nas linhas)
         # - predictions: matriz de saídas preditas (ativação da última camada)
 
+        assert expectations.shape == predictions.shape
         y = expectations.astype(int)
-        f = np.round_(predictions).astype(int)  # arredonda para 0 ou 1
 
-        tp = np.sum(y & f)        ## y == 1 and f == 1
-        fp = np.sum((f - y) > 0)  ## y == 0 and f == 1
-        fn = np.sum((f - y) < 0)  ## y == 1 and f == 0
+        if y.shape[1] == 1:
+            # uma coluna: classificação binária, arredonda para 0 ou 1
+            f = np.round_(predictions).astype(int)
+        else:
+            # múltiplas colunas: problema multiclasse
+            # acha o índice da coluna com a maior predição de cada linha
+            classes = np.argmax(predictions, axis=1)
+            # em cada linha, põe 1 na coluna com a maior predição e 0 nas demais
+            f = np.zeros_like(y)
+            f[np.arange(f.shape[0]), classes] = 1
 
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        score = 2.0 * precision * recall / (precision + recall)
-        return score
+        true_positives = np.sum(y & f, axis=0).astype(float)
+        precisions = true_positives / np.sum(f, axis=0)
+        recalls = true_positives / np.sum(y, axis=0)
+        scores = 2.0 * precisions * recalls / (precisions + recalls)
+        return np.mean(scores)
