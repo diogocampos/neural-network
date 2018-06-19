@@ -11,8 +11,8 @@ LAMBDA = 0.001
 HIDDEN_LAYERS = [5, 5]
 
 TRAINING_PARAMS = {
-    'alpha': 0.01,
-    'momentum': 0.99,
+    'alpha': 1.0,
+    'momentum': 0.8,
     'mindelta': 1e-9,
 }
 
