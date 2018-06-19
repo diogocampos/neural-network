@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from trabalho2.dataset import Dataset
-from trabalho2.neural_network import NeuralNetwork, f1_scores
+from trabalho2.neural_network import NeuralNetwork, f1_scores, classify
 
 
 def test_lambda_(example):
@@ -69,29 +69,45 @@ def test_total_error(example):
 
 
 def test_f1_scores_binary():
-    expectations = np.array([ [0.], [1.], [0.], [1.], [0.] ])
-    predictions = np.array([ [.9], [.9], [.1], [.9], [.1] ])
+    expectations = [ [0.], [1.], [0.], [1.], [0.] ]
+    predictions = [ [.9], [.9], [.1], [.9], [.1] ]
     expected_scores = [0.8]
 
-    scores = f1_scores(expectations, predictions)
+    scores = f1_scores(np.array(expectations), np.array(predictions))
     assert scores.tolist() == expected_scores
 
 
 def test_f1_scores_multiclass():
-    expectations = np.array([
+    expectations = [
         [1., 0., 0.],
         [0., 1., 0.],
         [0., 0., 1.],
-    ])
-    predictions = np.array([
+    ]
+    predictions = [
         [.9, .1, .1],
         [.9, .1, .1],
         [.1, .1, .9],
-    ])
+    ]
     expected_scores = [1/1.5, 0., 1.]
 
-    scores = f1_scores(expectations, predictions)
+    scores = f1_scores(np.array(expectations), np.array(predictions))
     assert scores.tolist() == expected_scores
+
+
+def test_classify():
+    predictions = [
+        [.1, .3, .2],
+        [.3, .2, .1],
+        [.2, .1, .3],
+    ]
+    expected_classes = [
+        [0., 1., 0.],
+        [1., 0., 0.],
+        [0., 0., 1.],
+    ]
+
+    classes = classify(np.array(predictions))
+    assert classes.tolist() == expected_classes
 
 
 ## Funções auxiliares

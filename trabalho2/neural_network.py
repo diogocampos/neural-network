@@ -219,23 +219,31 @@ def f1_scores(expectations, predictions):
 
     assert expectations.shape == predictions.shape
     y = expectations.astype(int)
+    f = classify(predictions).astype(int)
 
-    if y.shape[1] == 1:
-        # uma coluna: classificação binária, arredonda para 0 ou 1
-        f = np.round_(predictions).astype(int)
-    else:
-        # múltiplas colunas: problema multiclasse
-        # acha o índice da coluna com a maior predição de cada linha
-        classes = np.argmax(predictions, axis=1)
-        # em cada linha, põe 1 na coluna com a maior predição e 0 nas demais
-        f = np.zeros_like(y)
-        f[np.arange(f.shape[0]), classes] = 1
-
-    with np.errstate(invalid='ignore'):
-        true_positives = np.sum(y & f, axis=0)
+    with np.errstate(invalid='ignore'):  # ignora divisões 0/0
+        true_positives = np.sum(y & f, axis=0).astype(float)
         precisions = true_positives / np.sum(f, axis=0)
         recalls = true_positives / np.sum(y, axis=0)
         scores = 2.0 * precisions * recalls / (precisions + recalls)
 
     scores[np.isnan(scores)] = 0.0  # corrige divisões 0/0
     return scores
+
+
+def classify(predictions):
+    # Converte as ativações de saída da rede neural em classes 0.0 ou 1.0
+    # - predictions: matriz de saídas preditas (ativação da última camada)
+
+    if predictions.shape[1] == 1:
+        # uma coluna: classificação binária, arredonda para 0.0 ou 1.0
+        f = np.round_(predictions)
+    else:
+        # múltiplas colunas: problema multiclasse
+        # acha o índice da coluna com a maior predição de cada linha
+        classes = np.argmax(predictions, axis=1)
+        # em cada linha, põe 1.0 na coluna com a maior predição e 0.0 nas demais
+        f = np.zeros_like(predictions)
+        f[np.arange(f.shape[0]), classes] = 1.0
+
+    return f
