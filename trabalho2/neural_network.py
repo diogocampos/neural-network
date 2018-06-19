@@ -230,8 +230,11 @@ def f1_scores(expectations, predictions):
         f = np.zeros_like(y)
         f[np.arange(f.shape[0]), classes] = 1
 
-    true_positives = np.sum(y & f, axis=0)
-    precisions = true_positives / np.sum(f, axis=0)
-    recalls = true_positives / np.sum(y, axis=0)
-    scores = 2.0 * precisions * recalls / (precisions + recalls)
+    with np.errstate(invalid='ignore'):
+        true_positives = np.sum(y & f, axis=0)
+        precisions = true_positives / np.sum(f, axis=0)
+        recalls = true_positives / np.sum(y, axis=0)
+        scores = 2.0 * precisions * recalls / (precisions + recalls)
+
+    scores[np.isnan(scores)] = 0.0  # corrige divisões 0/0
     return scores

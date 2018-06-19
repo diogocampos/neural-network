@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from trabalho2.dataset import Dataset
-from trabalho2.neural_network import NeuralNetwork
+from trabalho2.neural_network import NeuralNetwork, f1_scores
 
 
 def test_lambda_(example):
@@ -66,6 +66,32 @@ def test_total_error(example):
     total_error = network.total_error(dataset.expectations, activations[-1])
 
     assert round(total_error, 5) == example['total_error']
+
+
+def test_f1_scores_binary():
+    expectations = np.array([ [0.], [1.], [0.], [1.], [0.] ])
+    predictions = np.array([ [.9], [.9], [.1], [.9], [.1] ])
+    expected_scores = [0.8]
+
+    scores = f1_scores(expectations, predictions)
+    assert scores.tolist() == expected_scores
+
+
+def test_f1_scores_multiclass():
+    expectations = np.array([
+        [1., 0., 0.],
+        [0., 1., 0.],
+        [0., 0., 1.],
+    ])
+    predictions = np.array([
+        [.9, .1, .1],
+        [.9, .1, .1],
+        [.1, .1, .9],
+    ])
+    expected_scores = [1/1.5, 0., 1.]
+
+    scores = f1_scores(expectations, predictions)
+    assert scores.tolist() == expected_scores
 
 
 ## Funções auxiliares
