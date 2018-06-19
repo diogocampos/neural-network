@@ -1,4 +1,3 @@
-import math
 import numpy as np
 
 
@@ -42,7 +41,7 @@ class Dataset:
         classes = np.unique(expectations, axis=0)
         groups = [np.where(np.all(expectations == c, axis=1))[0] for c in classes]
 
-        # divide grupos em `num_folds` pedaços
+        # divide cada grupo em `num_folds` pedaços
         groups = [np.array_split(g, num_folds) for g in groups]
 
         # forma folds com um pedaço de cada grupo
