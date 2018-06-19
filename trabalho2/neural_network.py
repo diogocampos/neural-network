@@ -178,13 +178,14 @@ class NeuralNetwork:
 
 
     def evaluate(self, dataset):
-        # Calcula o erro total J da rede neural com instâncias de teste.
+        # Avalia o desempenho da rede neural com instâncias de teste.
         # - dataset: conjunto de instâncias de teste
+        # Retorna o erro total J e a média dos F1-scores.
 
         predictions = self.propagate(dataset.features) [-1]
         j = self.total_error(dataset.expectations, predictions)
         scores = f1_scores(dataset.expectations, predictions)
-        return j, scores
+        return j, np.mean(scores)
 
 
     def total_error(self, expectations, predictions):
