@@ -183,8 +183,8 @@ class NeuralNetwork:
 
         predictions = self.propagate(dataset.features) [-1]
         j = self.total_error(dataset.expectations, predictions)
-        score = self.f1_score(dataset.expectations, predictions)
-        return j, score
+        scores = self.f1_scores(dataset.expectations, predictions)
+        return j, scores
 
 
     def total_error(self, expectations, predictions):
@@ -210,10 +210,11 @@ class NeuralNetwork:
         return error + regularization
 
 
-    def f1_score(self, expectations, predictions):
-        # Calcula a F1-measure da rede neural.
+    def f1_scores(self, expectations, predictions):
+        # Calcula as F1-measures de cada classe.
         # - expectations: matriz de saídas esperadas (instâncias nas linhas)
         # - predictions: matriz de saídas preditas (ativação da última camada)
+        # Retorna um np.array de valores, um para cada classe.
 
         assert expectations.shape == predictions.shape
         y = expectations.astype(int)
@@ -229,8 +230,8 @@ class NeuralNetwork:
             f = np.zeros_like(y)
             f[np.arange(f.shape[0]), classes] = 1
 
-        true_positives = np.sum(y & f, axis=0).astype(float)
+        true_positives = np.sum(y & f, axis=0)
         precisions = true_positives / np.sum(f, axis=0)
         recalls = true_positives / np.sum(y, axis=0)
         scores = 2.0 * precisions * recalls / (precisions + recalls)
-        return np.mean(scores)
+        return scores
