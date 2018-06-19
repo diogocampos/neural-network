@@ -44,11 +44,11 @@ class NeuralNetwork:
             self.weights.append(theta)
 
 
-    def train(self, batches, alpha=1e-3, momentum=0.5, mindelta=1e-9, skip=100):
+    def train(self, batches, alpha=1e-3, beta=0.5, mindelta=1e-9, skip=100):
         # Treina a rede neural com um dataset.
         # - batches: lista de datasets de treinamento
         # - alpha: taxa de aprendizado
-        # - momentum: fator beta do método do momento
+        # - beta: fator do método do momento
         # - mindelta: critério de parada (variação mínima do erro total)
         # - skip: número de iterações entre cada `yield` do erro J
         # Retorna um gerador que fornece o erro J após cada `skip` iterações.
@@ -67,7 +67,7 @@ class NeuralNetwork:
 
                 # atualiza os pesos
                 for i in range(len(self.weights)):
-                    z[i] = momentum * z[i] + gradients[i]
+                    z[i] = beta * z[i] + gradients[i]
                     self.weights[i] -= alpha * z[i]
 
             activations = self.propagate(combined.features)

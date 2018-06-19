@@ -12,7 +12,7 @@ HIDDEN_LAYERS = [5, 5]
 
 TRAINING_PARAMS = {
     'alpha': 1.0,
-    'momentum': 0.8,
+    'beta': 0.8,
     'mindelta': 1e-9,
 }
 
