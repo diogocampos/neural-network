@@ -38,11 +38,13 @@ class NeuralNetwork:
             num_neurons = self.structure[i + 1]
             num_inputs_per_neuron = self.structure[i] + 1
 
-            theta = np.random.random((num_neurons, num_inputs_per_neuron))
+            size = np.sqrt(2.0 / num_inputs_per_neuron)
+            random = np.random.random((num_neurons, num_inputs_per_neuron))
+            theta = random * 2.0 * size - size  # valores entre -size e +size
             self.weights.append(theta)
 
 
-    def train(self, batches, alpha=1e-3, momentum=0.9, mindelta=1e-9, skip=100):
+    def train(self, batches, alpha=1e-3, momentum=0.5, mindelta=1e-9, skip=100):
         # Treina a rede neural com um dataset.
         # - batches: lista de datasets de treinamento
         # - alpha: taxa de aprendizado
