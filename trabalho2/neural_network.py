@@ -181,15 +181,16 @@ class NeuralNetwork:
         # Calcula o erro total J da rede neural com instâncias de teste.
         # - dataset: conjunto de instâncias de teste
 
-        activations = self.propagate(dataset.features)
-        j = self.total_error(dataset.expectations, activations[-1])
-        return j
+        predictions = self.propagate(dataset.features) [-1]
+        j = self.total_error(dataset.expectations, predictions)
+        score = self.f1_score(dataset.expectations, predictions)
+        return j, score
 
 
     def total_error(self, expectations, predictions):
         # Calcula o erro total (J), com regularização.
         # - expectations: matriz de saídas esperadas (instâncias nas linhas)
-        # - predictions: matriz de saídas preditas (instâncias nas linhas)
+        # - predictions: matriz de saídas preditas (ativação da última camada)
 
         y = expectations.T
         f = predictions.T
@@ -207,3 +208,21 @@ class NeuralNetwork:
             regularization = sum_squares * self.lambda_ / (2.0 * n)
 
         return error + regularization
+
+
+    def f1_score(self, expectations, predictions):
+        # Calcula a F1-measure da rede neural.
+        # - expectations: matriz de saídas esperadas (instâncias nas linhas)
+        # - predictions: matriz de saídas preditas (ativação da última camada)
+
+        y = expectations.astype(int)
+        f = np.round_(predictions).astype(int)  # arredonda para 0 ou 1
+
+        tp = np.sum(y & f)        ## y == 1 and f == 1
+        fp = np.sum((f - y) > 0)  ## y == 0 and f == 1
+        fn = np.sum((f - y) < 0)  ## y == 1 and f == 0
+
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        score = 2.0 * precision * recall / (precision + recall)
+        return score

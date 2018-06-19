@@ -52,8 +52,8 @@ def cross_validation(network, dataset, num_folds, **training_params):
         except KeyboardInterrupt:
             pass
 
-        j_cv = network.evaluate(test_set)
-        print('\n    J_cv =', j_cv)
+        j_cv, f1_score = network.evaluate(test_set)
+        print('\n    J_cv = %r, F1_score = %r' % (j_cv, f1_score))
 
 
 if __name__ == '__main__':
