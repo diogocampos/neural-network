@@ -9,16 +9,15 @@ from trabalho2.dataset import Dataset
 from trabalho2.neural_network import NeuralNetwork
 
 
-# Variações de parâmetros da rede
-LAMBDAS = [0.001, 0.01, 0.1, 1.0, 10.0]
-NUMS_HIDDEN_LAYERS = [1, 2, 3]
-NUMS_NEURONS_PER_LAYER = [2, 4, 6, 8, 10]
+# Variações de parâmetros da rede neural
+HIDDEN_LAYERS = [[5, n] for n in range(1, 6)]
+LAMBDAS = [0.01, 0.1, 1.0]
 
 # Parâmetros de treinamento
 PARAMS = {
     'alpha': 1.0,
-    'beta': 0.7,
-    'mindelta': 1e-9,
+    'beta': 0.8,
+    'mindelta': 1e-7,
 }
 
 # Número de folds da validação cruzada
@@ -38,31 +37,19 @@ def main(argv):
     instances = parsing.parse_dataset_file(dataset_file)
     dataset = Dataset(instances, normalize=True)
 
-    n_inputs = dataset.num_inputs()
-    n_outputs = dataset.num_outputs()
-    structures = ([n_inputs] + hidden_layers + [n_outputs] for hidden_layers in
-        hidden_layer_variations(NUMS_HIDDEN_LAYERS, NUMS_NEURONS_PER_LAYER))
+    structures = ([dataset.num_inputs()] + hidden + [dataset.num_outputs()]
+        for hidden in HIDDEN_LAYERS)
 
-    for network in network_variations(LAMBDAS, structures):
-        results = cross_validation(network, dataset, NUM_FOLDS, **PARAMS)
-        save_results(RESULTS_DIR, results)
-
-
-def hidden_layer_variations(nums_layers, nums_neurons_per_layer):
-    for n_layers in nums_layers:
-        for n_neurons in nums_neurons_per_layer:
-            yield n_layers * [n_neurons]
-
-
-def network_variations(lambdas, structures):
     for structure in structures:
-        for lambda_ in lambdas:
-            yield NeuralNetwork(lambda_, structure)
+        for lambda_ in LAMBDAS:
+            network = NeuralNetwork(lambda_, structure)
+            results = cross_validation(network, dataset, NUM_FOLDS, **PARAMS)
+            save_results(RESULTS_DIR, results)
 
 
 def cross_validation(network, dataset, num_folds, **training_params):
     print()
-    print('lambda = %r, structure = %r' % (network.lambda_, network.structure))
+    print('structure = %r, lambda = %r' % (network.structure, network.lambda_))
     print(', '.join('%s = %r' % (k, v) for k, v in training_params.items()))
 
     folds = dataset.random_folds(num_folds)
@@ -74,10 +61,10 @@ def cross_validation(network, dataset, num_folds, **training_params):
         print('Fold %d/%d:' % (i + 1, len(folds)))
 
         for j_t in network.train(training_sets, **training_params):
-            print('    J_t =', j_t, end='\r')
+            print('   J_t  =', j_t, end='\r')
 
         j_cv, f1_score = network.evaluate(test_set)
-        print('\n    J_cv = %r, F1_score = %r' % (j_cv, f1_score))
+        print('\n   J_cv = %r,\tF1_score = %r' % (j_cv, f1_score))
 
         fold_results.append({
             'j_t': j_t,
@@ -94,7 +81,7 @@ def cross_validation(network, dataset, num_folds, **training_params):
 
 
 def save_results(dirname, results):
-    structure = '-'.join(str(size) for size in results['structure'])
+    structure = ','.join(str(size) for size in results['structure'])
     filename = '%s-%r.json' % (structure, results['lambda'])
     path = Path(__file__).parent / dirname / filename
 
