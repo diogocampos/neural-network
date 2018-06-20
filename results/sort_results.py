@@ -8,13 +8,16 @@ import sys
 def main(argv):
 
     if len(argv) < 2:
-        print('Usage: %s RESULTS_DIR' % argv[0], file=sys.stderr)
+        print('Usage: %s RESULTS_DIR [--csv]' % argv[0], file=sys.stderr)
         return 1
 
     dirname = argv[1]
+    use_csv = (len(argv) > 2 and argv[2] == '--csv')
+
     results = load_results(dirname)
     sorted_results = sorted(results, key=lambda r: get_average(r, 'j_cv'))
-    print_results(sorted_results)
+
+    print_results(sorted_results, use_csv)
 
 
 def load_results(dirname):
@@ -26,7 +29,7 @@ def load_results(dirname):
         with open(filename, 'r') as file:
             data = json.loads(file.read())
             results.append(data)
-    
+
     return results
 
 
@@ -38,7 +41,19 @@ def get_average(result, key):
     return average
 
 
-def print_results(results):
+def print_results(results, use_csv=False):
+
+    if use_csv:
+        row_format = '%s;%s;%s;%s'
+    else:
+        row_format = '%-20s %-20s %-20s %-20s'
+
+    table = format_results(results)
+    for row in table:
+        print(row_format % tuple(row))
+
+
+def format_results(results):
 
     table = [['Structure', 'Lambda', 'Average J_cv', 'Average F1_score']]
 
@@ -51,8 +66,7 @@ def print_results(results):
         ]
         table.append(row)
 
-    for row in table:
-        print('%-20s %-20s %-20s %-20s' % tuple(row))
+    return table
 
 
 if __name__ == '__main__':
