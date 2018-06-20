@@ -46,7 +46,7 @@ def print_results(results, use_csv=False):
     if use_csv:
         row_format = '%s;%s;%s;%s'
     else:
-        row_format = '%-20s %-20s %-20s %-20s'
+        row_format = '%-15s %-15s %-20s %-20s'
 
     table = format_results(results)
     for row in table:
@@ -59,7 +59,7 @@ def format_results(results):
 
     for result in results:
         row = [
-            result['structure'],
+            ' '.join(str(val) for val in result['structure']),
             result['lambda'],
             get_average(result, 'j_cv'),
             get_average(result, 'f1_score'),
