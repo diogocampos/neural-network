@@ -44,9 +44,9 @@ def get_average(result, key):
 def print_results(results, use_csv=False):
 
     if use_csv:
-        row_format = '"%s",%s,%s,%s'
+        row_format = '"%s",%s,%s,%s,%s'
     else:
-        row_format = '%-15s %-15s %-20s %-20s'
+        row_format = '%-12s %-12s %-20s %-20s %-20s'
 
     table = format_results(results)
     for row in table:
@@ -55,12 +55,13 @@ def print_results(results, use_csv=False):
 
 def format_results(results):
 
-    table = [['Structure', 'Lambda', 'Average J_cv', 'Average F1_score']]
+    table = [['Structure', 'Lambda', 'Avg J_t', 'Avg J_cv', 'Avg F1_score']]
 
     for result in results:
         row = [
             ' '.join(str(val) for val in result['structure']),
             result['lambda'],
+            get_average(result, 'j_t'),
             get_average(result, 'j_cv'),
             get_average(result, 'f1_score'),
         ]
