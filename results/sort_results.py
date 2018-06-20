@@ -46,7 +46,7 @@ def print_results(results, use_csv=False):
     if use_csv:
         row_format = '"%s",%s,%s,%s,%s'
     else:
-        row_format = '%-12s %-12s %-20s %-20s %-20s'
+        row_format = '%-12s %-10s %-20s %-20s %-20s'
 
     table = format_results(results)
     for row in table:
