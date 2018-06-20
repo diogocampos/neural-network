@@ -44,7 +44,7 @@ def get_average(result, key):
 def print_results(results, use_csv=False):
 
     if use_csv:
-        row_format = '%s;%s;%s;%s'
+        row_format = '"%s",%s,%s,%s'
     else:
         row_format = '%-15s %-15s %-20s %-20s'
 
