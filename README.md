@@ -42,3 +42,14 @@ $ pipenv run ./cross_validation.py path/to/dataset.txt
 ```
 
 Os parâmetros de execução podem ser alterados manualmente, editando as constantes definidas no início do arquivo `cross_validation.py`.
+
+
+## Classificação dos resultados
+
+O comando a seguir carrega todos os arquivos `*.json` de resultados de um diretório e gera uma tabela ordenada pela média do erro de validação (`J_cv`) de cada rede neural.
+
+```
+$ pipenv run results/sort_results.py path/to/results/dir [--csv]
+```
+
+Com a opção `--csv`, os resultados são impressos em formato CSV.
