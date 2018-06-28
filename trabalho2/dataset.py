@@ -4,9 +4,11 @@ import numpy as np
 class Dataset:
 
     def __init__(self, instances, normalize=False):
-        # Inicializa um dataset.
-        # - instances: lista de instâncias de treinamento
-        # (cada instância é um par de duas listas: atributos e saídas)
+        """
+        Inicializa um dataset.
+          - instances: lista de instâncias de treinamento
+            (cada instância deve ser um par de duas listas: atributos e saídas)
+        """
 
         self.features = np.array([i[0] for i in instances])
         self.expectations = np.array([i[1] for i in instances])
@@ -28,9 +30,11 @@ class Dataset:
 
 
     def random_folds(self, num_folds):
-        # Divide o dataset em folds aleatórios estratificados.
-        # - num_folds: número desejado de folds
-        # Retorna uma lista de sub-datasets, um para cada fold.
+        """
+        Divide o dataset em folds aleatórios estratificados.
+          - num_folds: número desejado de folds
+        Retorna uma lista de sub-datasets, um para cada fold.
+        """
 
         # reordena o dataset aleatoriamente
         indexes = np.random.permutation(len(self.features))
@@ -58,6 +62,9 @@ class Dataset:
 
 
 def join_datasets(datasets):
+    """
+    Junta todas as instâncias de uma lista de datasets em um só dataset.
+    """
     combined = Dataset([])
     combined.features = np.concatenate([d.features for d in datasets])
     combined.expectations = np.concatenate([d.expectations for d in datasets])

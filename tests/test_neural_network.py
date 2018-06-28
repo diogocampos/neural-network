@@ -113,24 +113,28 @@ def test_classify():
 ## Funções auxiliares
 
 def init_network(example):
-    # Inicializa uma rede neural com os valores do exemplo dado.
-
+    """
+    Inicializa uma rede neural com os valores do exemplo dado.
+    """
     network = NeuralNetwork(*example['network'])
     network.set_weights(example['weights'])
     return network
 
 
 def init_network_and_dataset(example):
-    # Inicializa uma rede neural e um dataset com os valores do exemplo dado.
-
+    """
+    Inicializa uma rede neural e um dataset com os valores do exemplo dado.
+    """
     network = init_network(example)
     dataset = Dataset(example['dataset'])
     return network, dataset
 
 
 def round_matrixes(matrixes, decimals=5):
-    # Arredonda os valores dos elementos de uma lista de arrays NumPy.
-
+    """
+    Dada uma lista de arrays NumPy, retorna os arrays convertidos para listas,
+    com seus valores arrendondados para o número desejado de casas decimais.
+    """
     matrixes = [np.round_(m, decimals=decimals) for m in matrixes]
     matrixes = [m.tolist() for m in matrixes]
     return matrixes

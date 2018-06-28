@@ -6,17 +6,21 @@ from .dataset import join_datasets
 class NeuralNetwork:
 
     def __init__(self, lambda_, structure):
-        # Inicializa uma rede neural.
-        # - lambda_: fator de regularização
-        # - structure: lista dos tamanhos de cada camada da rede
+        """
+        Inicializa uma rede neural.
+          - lambda_: fator de regularização
+          - structure: lista dos tamanhos de cada camada da rede
+        """
 
         self.lambda_ = lambda_
         self.structure = tuple(structure)
 
 
     def set_weights(self, weights):
-        # Define os pesos dos neurônios da rede.
-        # - weights: lista de matrizes theta (um neurônio por linha, com bias)
+        """
+        Define os pesos dos neurônios da rede.
+          - weights: lista de matrizes theta (um neurônio por linha, com bias)
+        """
 
         weights = [np.array(theta) for theta in weights]
 
@@ -30,7 +34,9 @@ class NeuralNetwork:
 
 
     def set_random_weights(self):
-        # Inicializa os pesos dos neurônios aleatoriamente.
+        """
+        Inicializa os pesos dos neurônios aleatoriamente.
+        """
 
         self.weights = []
 
@@ -45,13 +51,15 @@ class NeuralNetwork:
 
 
     def train(self, batches, alpha=1e-3, beta=0.5, mindelta=1e-9, skip=100):
-        # Treina a rede neural com um dataset.
-        # - batches: lista de datasets de treinamento
-        # - alpha: taxa de aprendizado
-        # - beta: fator do método do momento
-        # - mindelta: critério de parada (variação mínima do erro total)
-        # - skip: número de iterações entre cada `yield` do erro J
-        # Retorna um gerador que fornece o erro J após cada `skip` iterações.
+        """
+        Treina a rede neural com um dataset.
+          - batches: lista de datasets de treinamento
+          - alpha: taxa de aprendizado
+          - beta: fator do método do momento
+          - mindelta: critério de parada (variação mínima do erro total)
+          - skip: número de iterações entre cada `yield` do erro J
+        Retorna um gerador que fornece o erro J após cada `skip` iterações.
+        """
 
         self.set_random_weights()
 
@@ -81,12 +89,14 @@ class NeuralNetwork:
 
 
     def propagate(self, features):
-        # Calcula as ativações da rede para um conjunto de instâncias.
-        # - features: matriz de atributos de instância (instâncias nas linhas)
-        # Retorna uma lista de matrizes com as ativações de cada camada.
-        #   * uma matriz por camada da rede, incluindo as entradas
-        #   * cada linha tem as ativações da camada para uma instância
-        #   * todas as matrizes (menos a última) incluem uma coluna de bias
+        """
+        Calcula as ativações da rede para um conjunto de instâncias.
+          - features: matriz de atributos de instância (instâncias nas linhas)
+        Retorna uma lista de matrizes com as ativações de cada camada:
+          * uma matriz por camada da rede, incluindo as entradas
+          * cada linha tem as ativações da camada para uma instância
+          * todas as matrizes (menos a última) incluem uma coluna de bias
+        """
 
         a = features.T
         activations = []
@@ -105,12 +115,14 @@ class NeuralNetwork:
 
 
     def _backpropagate(self, expectations, activations):
-        # Calcula os gradientes finais para um conjunto de instâncias.
-        # - expectations: matriz de saídas esperadas (instâncias nas linhas)
-        # - activations: lista de matrizes das ativações dos neurônios
-        #     (mesmo formato da saída do método `propagate`)
-        # Retorna uma lista de matrizes com os gradientes de cada camada,
-        # com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
+        Calcula os gradientes finais para um conjunto de instâncias.
+          - expectations: matriz de saídas esperadas (instâncias nas linhas)
+          - activations: lista de matrizes das ativações dos neurônios
+            (mesmo formato da saída do método `propagate`)
+        Retorna uma lista de matrizes com os gradientes de cada camada,
+        com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
 
         y = expectations.T
         f = activations[-1].T
@@ -143,9 +155,11 @@ class NeuralNetwork:
 
 
     def gradients(self, dataset):
-        # Calcula os gradientes por backpropagation.
-        # Retorna uma lista de matrizes com os gradientes de cada camada,
-        # com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
+        Calcula os gradientes por backpropagation.
+        Retorna uma lista de matrizes com os gradientes de cada camada,
+        com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
 
         activations = self.propagate(dataset.features)
         gradients = self._backpropagate(dataset.expectations, activations)
@@ -153,9 +167,11 @@ class NeuralNetwork:
 
 
     def numeric_gradients(self, dataset, epsilon=1e-6):
-        # Calcula estimativas numéricas dos gradientes.
-        # Retorna uma lista de matrizes com os gradientes de cada camada,
-        # com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
+        Calcula estimativas numéricas dos gradientes.
+        Retorna uma lista de matrizes com os gradientes de cada camada,
+        com o mesmo formato que a lista de matrizes dos pesos da rede.
+        """
 
         gradients = [np.empty(theta.shape) for theta in self.weights]
 
@@ -178,9 +194,11 @@ class NeuralNetwork:
 
 
     def evaluate(self, dataset):
-        # Avalia o desempenho da rede neural com instâncias de teste.
-        # - dataset: conjunto de instâncias de teste
-        # Retorna o erro total J e a média dos F1-scores.
+        """
+        Avalia o desempenho da rede neural com instâncias de teste.
+          - dataset: conjunto de instâncias de teste
+        Retorna o erro total J e a média dos F1-scores.
+        """
 
         predictions = self.propagate(dataset.features) [-1]
         j = self.total_error(dataset.expectations, predictions)
@@ -189,9 +207,11 @@ class NeuralNetwork:
 
 
     def total_error(self, expectations, predictions):
-        # Calcula o erro total (J), com regularização.
-        # - expectations: matriz de saídas esperadas (instâncias nas linhas)
-        # - predictions: matriz de saídas preditas (ativação da última camada)
+        """
+        Calcula o erro total (J), com regularização.
+          - expectations: matriz de saídas esperadas (instâncias nas linhas)
+          - predictions: matriz de saídas preditas (ativação da última camada)
+        """
 
         y = expectations.T
         f = predictions.T
@@ -212,10 +232,12 @@ class NeuralNetwork:
 
 
 def f1_scores(expectations, predictions):
-    # Calcula as F1-measures de cada classe.
-    # - expectations: matriz de saídas esperadas (instâncias nas linhas)
-    # - predictions: matriz de saídas preditas (ativação da última camada)
-    # Retorna um np.array de valores, um para cada classe.
+    """
+    Calcula as F1-measures de cada classe.
+      - expectations: matriz de saídas esperadas (instâncias nas linhas)
+      - predictions: matriz de saídas preditas (ativação da última camada)
+    Retorna um np.array de valores, um para cada classe.
+    """
 
     assert expectations.shape == predictions.shape
     y = expectations.astype(int)
@@ -232,8 +254,10 @@ def f1_scores(expectations, predictions):
 
 
 def classify(predictions):
-    # Converte as ativações de saída da rede neural em classes 0.0 ou 1.0
-    # - predictions: matriz de saídas preditas (ativação da última camada)
+    """
+    Converte as ativações de saída da rede neural em classes 0.0 ou 1.0
+      - predictions: matriz de saídas preditas (ativação da última camada)
+    """
 
     if predictions.shape[1] == 1:
         # uma coluna: classificação binária, arredonda para 0.0 ou 1.0
