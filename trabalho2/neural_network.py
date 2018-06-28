@@ -29,6 +29,7 @@ class NeuralNetwork:
             assert theta.shape == (num_neurons, num_inputs_per_neuron)
 
         self.weights = weights
+        self._gradients = [np.array(theta) for theta in self.weights]
 
 
     def set_random_weights(self):
@@ -45,6 +46,8 @@ class NeuralNetwork:
             random = np.random.random((num_neurons, num_inputs_per_neuron))
             theta = random * 2.0 * size - size  # valores entre -size e +size
             self.weights.append(theta)
+
+        self._gradients = [np.array(theta) for theta in self.weights]
 
 
     def train(self, batches, alpha=1e-3, beta=0.5, mindelta=1e-9, skip=100):
@@ -99,7 +102,7 @@ class NeuralNetwork:
         activations = []
 
         for theta in self.weights:
-            # adiciona os neurônios de bias
+            # insere os neurônios de bias
             bias = np.ones(a.shape[1])
             a = np.vstack((bias, a))
             activations.append(a.T)
@@ -130,20 +133,20 @@ class NeuralNetwork:
 
         n = y.shape[1]  # número de instâncias
         delta = f - y
-        gradients = list(self.weights)
+        gradients = self._gradients
 
         for i in range(len(self.weights) - 1, -1, -1):
             theta = self.weights[i]
             a = activations[i].T
 
-            gradient = np.matmul(delta, a.T)
+            gradient = np.matmul(delta, activations[i], out=gradients[i])
 
-            #delta = np.matmul(theta.T, delta) * a * (1.0 - a)
-            delta = np.matmul(theta.T, delta)
-            delta *= a
-            delta *= 1.0 - a
-
-            delta = delta[1:]  # descarta a primeira linha (bias)
+            if i > 0:
+                #delta = np.matmul(theta.T, delta) * a * (1.0 - a)
+                delta = np.matmul(theta.T, delta)
+                delta *= a
+                delta *= 1.0 - a
+                delta = delta[1:]  # descarta a primeira linha (bias)
 
             if self.lambda_ == 0.0:
                 regularization = 0.0
@@ -157,7 +160,7 @@ class NeuralNetwork:
             #gradient = (gradient + regularization) / n
             gradient += regularization
             gradient /= n
-            gradients[i] = gradient
+            #gradients[i] = gradient
 
         return gradients
 
