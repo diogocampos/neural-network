@@ -71,7 +71,9 @@ class NeuralNetwork:
 
                 # atualiza os pesos
                 for i in range(len(self.weights)):
-                    z[i] = beta * z[i] + gradients[i]
+                    #z[i] = beta * z[i] + gradients[i]
+                    z[i] *= beta
+                    z[i] += gradients[i]
                     self.weights[i] -= alpha * z[i]
 
             activations = self.propagate(combined.features)
@@ -102,8 +104,12 @@ class NeuralNetwork:
             a = np.vstack((bias, a))
             activations.append(a.T)
 
-            z = theta.dot(a)
-            a = 1.0 / (1.0 + np.exp(-z))
+            z = np.matmul(theta, a)
+            #a = 1.0 / (1.0 + np.exp(-z))
+            z *= -1.0
+            np.exp(z, out=z)
+            z += 1.0
+            a = np.power(z, -1.0, out=z)
 
         activations.append(a.T)
         return activations
@@ -124,14 +130,19 @@ class NeuralNetwork:
 
         n = y.shape[1]  # número de instâncias
         delta = f - y
-        gradients = []
+        gradients = list(self.weights)
 
         for i in range(len(self.weights) - 1, -1, -1):
             theta = self.weights[i]
             a = activations[i].T
 
-            gradient = delta.dot(a.T)
-            delta = theta.T.dot(delta) * a * (1.0 - a)
+            gradient = np.matmul(delta, a.T)
+
+            #delta = np.matmul(theta.T, delta) * a * (1.0 - a)
+            delta = np.matmul(theta.T, delta)
+            delta *= a
+            delta *= 1.0 - a
+
             delta = delta[1:]  # descarta a primeira linha (bias)
 
             if self.lambda_ == 0.0:
@@ -139,12 +150,15 @@ class NeuralNetwork:
             else:
                 temp = np.array(theta)
                 temp[:, 0] = 0.0  # zera a primeira coluna
-                regularization = self.lambda_ * temp
+                #regularization = self.lambda_ * temp
+                temp *= self.lambda_
+                regularization = temp
 
-            gradient = (gradient + regularization) / n
-            gradients.append(gradient)
+            #gradient = (gradient + regularization) / n
+            gradient += regularization
+            gradient /= n
+            gradients[i] = gradient
 
-        gradients.reverse()
         return gradients
 
 
@@ -208,7 +222,16 @@ class NeuralNetwork:
         assert y.shape == f.shape
 
         n = y.shape[1]  # número de instâncias
-        error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
+
+        #error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
+        t1 = np.log(f)
+        t1 *= y
+        t1 *= -1.0
+        t2 = 1.0 - f
+        np.log(t2, out=t2)
+        t2 *= 1.0 - y
+        t1 -= t2
+        error = np.sum(t1) / n
 
         if self.lambda_ == 0.0:
             regularization = 0.0
