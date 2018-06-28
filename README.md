@@ -1,15 +1,13 @@
+# Trabalho 2 -- Redes Neurais
+
+
 ## Instalação das dependências
 
-1. Instalar Pipenv, se já não estiver instalado: https://docs.pipenv.org
+Esta implementação requer a instalação de uma versão recente do interpretador Python 3 e da biblioteca NumPy. Caso necessário, essas dependências podem ser instaladas da seguinte forma:
 
-2. Executar, no diretório raiz deste projeto: `$ pipenv install --dev`
+1. Instalar a ferramenta Pipenv: https://docs.pipenv.org
 
-
-## Execução dos testes
-
-```
-$ pipenv run pytest
-```
+2. Executar, no diretório raiz deste projeto: `$ pipenv install`
 
 
 ## Verificação da corretude
@@ -17,13 +15,13 @@ $ pipenv run pytest
 Cálculo de gradientes por *backpropagation*:
 
 ```
-$ pipenv run ./backpropagation.py NETWORK_FILE WEIGHTS_FILE DATASET_FILE
+$ ./backpropagation.py NETWORK_FILE WEIGHTS_FILE DATASET_FILE
 ```
 
 Cálculo de gradientes por estimativa numérica:
 
 ```
-$ pipenv run ./numeric_verification.py NETWORK_FILE WEIGHTS_FILE DATASET_FILE
+$ ./numeric_verification.py NETWORK_FILE WEIGHTS_FILE DATASET_FILE
 ```
 
 A saída desses scripts tem o mesmo formato que o arquivo *initial_weights.txt* detalhado na especificação do trabalho:
@@ -38,13 +36,13 @@ A saída desses scripts tem o mesmo formato que o arquivo *initial_weights.txt* 
 ## Validação cruzada
 
 ```
-$ pipenv run ./cross_validation.py path/to/dataset.txt
+$ ./cross_validation.py path/to/dataset.txt
 ```
 
 Os parâmetros de execução podem ser alterados manualmente, editando as constantes definidas no início do arquivo `cross_validation.py`.
 
 
-## Classificação dos resultados
+## Tabelação dos resultados
 
 O comando a seguir carrega todos os arquivos `*.json` de resultados de um diretório e gera uma tabela ordenada pela média do erro de validação (`J_cv`) de cada rede neural.
 
@@ -53,3 +51,13 @@ $ ./results/sort_results.py path/to/results/dir [--csv]
 ```
 
 Com a opção `--csv`, os resultados são impressos em formato CSV.
+
+
+## Execução dos testes unitários
+
+Executar, no diretório raiz do projeto:
+
+```
+$ pipenv install --dev  # Para instalar a ferramenta pytest, se necessário
+$ pytest
+```
