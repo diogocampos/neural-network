@@ -44,7 +44,7 @@ def parse_dataset_file(filename):
 
     instances = []
     for line in lines:
-        features, expectations = [values.split(',') for values in line.split(';')]
+        features, expectations = [vals.split(',') for vals in line.split(';')]
         features = [float(value) for value in features]
         expectations = [float(value) for value in expectations]
         instances.append((features, expectations))

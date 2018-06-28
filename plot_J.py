@@ -9,7 +9,7 @@ from trabalho2.neural_network import NeuralNetwork
 
 
 SKIP = 10
-MAX_ITERATIONS = 1000
+MAX_SAMPLES = 1000
 NUM_BATCHES = 10
 
 
@@ -35,9 +35,9 @@ def main(argv):
     for j_t in network.train(batches, **result['training'], skip=SKIP):
         print('%s,%s' % (counter * SKIP, j_t))
         counter += 1
-        if counter >= MAX_ITERATIONS: break
-
-    print('%s,%s' % (counter * SKIP, j_t))
+        if counter >= MAX_SAMPLES: break
+    else:
+        print('%s,%s' % (counter * SKIP, j_t))
 
 
 if __name__ == '__main__':

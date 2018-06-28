@@ -7,9 +7,6 @@ from trabalho2.dataset import Dataset
 from trabalho2.neural_network import NeuralNetwork
 
 
-USAGE = 'Uso:  $ %s NETWORK_FILE WEIGHTS_FILE DATASET_FILE'
-
-
 def backpropagation(network, dataset):
     return network.gradients(dataset)
 
@@ -21,7 +18,8 @@ def main(argv, calculate_gradients=backpropagation):
     try:
         network_file, weights_file, dataset_file = argv[1:]
     except ValueError:
-        print(USAGE % argv[0], file=sys.stderr)
+        usage = 'Usage:  %s NETWORK_FILE WEIGHTS_FILE DATASET_FILE'
+        print(usage % argv[0], file=sys.stderr)
         return 1
 
     network = NeuralNetwork(*parsing.parse_network_file(network_file))

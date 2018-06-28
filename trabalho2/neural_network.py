@@ -11,7 +11,6 @@ class NeuralNetwork:
           - lambda_: fator de regularização
           - structure: lista dos tamanhos de cada camada da rede
         """
-
         self.lambda_ = lambda_
         self.structure = tuple(structure)
 
@@ -21,7 +20,6 @@ class NeuralNetwork:
         Define os pesos dos neurônios da rede.
           - weights: lista de matrizes theta (um neurônio por linha, com bias)
         """
-
         weights = [np.array(theta) for theta in weights]
 
         # verifica match entre os pesos fornecidos e a estrutura da rede
@@ -37,7 +35,6 @@ class NeuralNetwork:
         """
         Inicializa os pesos dos neurônios aleatoriamente.
         """
-
         self.weights = []
 
         for i in range(len(self.structure) - 1):
@@ -60,7 +57,6 @@ class NeuralNetwork:
           - skip: número de iterações entre cada `yield` do erro J
         Retorna um gerador que fornece o erro J após cada `skip` iterações.
         """
-
         self.set_random_weights()
 
         combined = join_datasets(batches)
@@ -97,7 +93,6 @@ class NeuralNetwork:
           * cada linha tem as ativações da camada para uma instância
           * todas as matrizes (menos a última) incluem uma coluna de bias
         """
-
         a = features.T
         activations = []
 
@@ -123,7 +118,6 @@ class NeuralNetwork:
         Retorna uma lista de matrizes com os gradientes de cada camada,
         com o mesmo formato que a lista de matrizes dos pesos da rede.
         """
-
         y = expectations.T
         f = activations[-1].T
         assert y.shape == f.shape
@@ -160,7 +154,6 @@ class NeuralNetwork:
         Retorna uma lista de matrizes com os gradientes de cada camada,
         com o mesmo formato que a lista de matrizes dos pesos da rede.
         """
-
         activations = self.propagate(dataset.features)
         gradients = self._backpropagate(dataset.expectations, activations)
         return gradients
@@ -172,23 +165,22 @@ class NeuralNetwork:
         Retorna uma lista de matrizes com os gradientes de cada camada,
         com o mesmo formato que a lista de matrizes dos pesos da rede.
         """
-
         gradients = [np.empty(theta.shape) for theta in self.weights]
 
         for t, theta in enumerate(self.weights):
             for n, neuron in enumerate(theta):
                 for w, weight in enumerate(neuron):
 
-                    self.weights[t][n, w] = weight + epsilon
-                    activations = self.propagate(dataset.features)
-                    j2 = self.total_error(dataset.expectations, activations[-1])
-
                     self.weights[t][n, w] = weight - epsilon
-                    activations = self.propagate(dataset.features)
-                    j1 = self.total_error(dataset.expectations, activations[-1])
+                    predictions = self.propagate(dataset.features)[-1]
+                    j1 = self.total_error(dataset.expectations, predictions)
 
-                    gradients[t][n, w] = (j2 - j1) / (2.0 * epsilon)
+                    self.weights[t][n, w] = weight + epsilon
+                    predictions = self.propagate(dataset.features)[-1]
+                    j2 = self.total_error(dataset.expectations, predictions)
+
                     self.weights[t][n, w] = weight
+                    gradients[t][n, w] = (j2 - j1) / (2.0 * epsilon)
 
         return gradients
 
@@ -199,8 +191,7 @@ class NeuralNetwork:
           - dataset: conjunto de instâncias de teste
         Retorna o erro total J e a média dos F1-scores.
         """
-
-        predictions = self.propagate(dataset.features) [-1]
+        predictions = self.propagate(dataset.features)[-1]
         j = self.total_error(dataset.expectations, predictions)
         scores = f1_scores(dataset.expectations, predictions)
         return j, np.mean(scores)
@@ -212,7 +203,6 @@ class NeuralNetwork:
           - expectations: matriz de saídas esperadas (instâncias nas linhas)
           - predictions: matriz de saídas preditas (ativação da última camada)
         """
-
         y = expectations.T
         f = predictions.T
         assert y.shape == f.shape
@@ -238,7 +228,6 @@ def f1_scores(expectations, predictions):
       - predictions: matriz de saídas preditas (ativação da última camada)
     Retorna um np.array de valores, um para cada classe.
     """
-
     assert expectations.shape == predictions.shape
     y = expectations.astype(int)
     f = classify(predictions).astype(int)
@@ -258,7 +247,6 @@ def classify(predictions):
     Converte as ativações de saída da rede neural em classes 0.0 ou 1.0
       - predictions: matriz de saídas preditas (ativação da última camada)
     """
-
     if predictions.shape[1] == 1:
         # uma coluna: classificação binária, arredonda para 0.0 ou 1.0
         f = np.round_(predictions)
@@ -266,8 +254,7 @@ def classify(predictions):
         # múltiplas colunas: problema multiclasse
         # acha o índice da coluna com a maior predição de cada linha
         classes = np.argmax(predictions, axis=1)
-        # em cada linha, põe 1.0 na coluna com a maior predição e 0.0 nas demais
+        # em cada linha, põe 1.0 na coluna com a maior predição e 0.0 nas outras
         f = np.zeros_like(predictions)
         f[np.arange(f.shape[0]), classes] = 1.0
-
     return f

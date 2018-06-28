@@ -16,7 +16,7 @@ LAMBDAS = [0.01, 0.1, 1.0]
 # Parâmetros de treinamento
 PARAMS = {
     'alpha': 1.0,
-    'beta': 0.8,
+    'beta': 0.5,
     'mindelta': 1e-7,
 }
 
@@ -81,6 +81,7 @@ def cross_validation(network, dataset, num_folds, **training_params):
 
 
 def save_results(dirname, results):
+    # monta o nome do arquivo: es,tru,tu,ra-lambda.json
     structure = ','.join(str(size) for size in results['structure'])
     filename = '%s-%r.json' % (structure, results['lambda'])
     path = Path(__file__).parent / dirname / filename

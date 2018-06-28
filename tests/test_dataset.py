@@ -55,14 +55,14 @@ def test_random_folds():
 
 def test_join_datasets():
     d1 = Dataset([
-        ([0.], [0.]),
-        ([1.], [1.]),
+        ([0.], [1.]),
+        ([2.], [3.]),
     ])
     d2 = Dataset([
-        ([2.], [2.]),
-        ([3.], [3.]),
+        ([4.], [5.]),
+        ([6.], [7.]),
     ])
     combined = join_datasets([d1, d2])
 
-    assert combined.features.tolist() == [[0.], [1.], [2.], [3.]]
-    assert combined.expectations.tolist() == [[0.], [1.], [2.], [3.]]
+    assert combined.features.tolist() == [[0.], [2.], [4.], [6.]]
+    assert combined.expectations.tolist() == [[1.], [3.], [5.], [7.]]

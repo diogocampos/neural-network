@@ -9,7 +9,6 @@ class Dataset:
           - instances: lista de instâncias de treinamento
             (cada instância deve ser um par de duas listas: atributos e saídas)
         """
-
         self.features = np.array([i[0] for i in instances])
         self.expectations = np.array([i[1] for i in instances])
 
@@ -35,7 +34,6 @@ class Dataset:
           - num_folds: número desejado de folds
         Retorna uma lista de sub-datasets, um para cada fold.
         """
-
         # reordena o dataset aleatoriamente
         indexes = np.random.permutation(len(self.features))
         features = self.features[indexes]
@@ -43,10 +41,10 @@ class Dataset:
 
         # separa as instâncias em grupos, por classe
         classes = np.unique(expectations, axis=0)
-        groups = [np.where(np.all(expectations == c, axis=1))[0] for c in classes]
+        groups = [np.where(np.all(expectations == c, axis=1)) for c in classes]
 
         # divide cada grupo em `num_folds` pedaços
-        groups = [np.array_split(g, num_folds) for g in groups]
+        groups = [np.array_split(g, num_folds) for (g,) in groups]
 
         # forma folds com um pedaço de cada grupo
         folds = []
