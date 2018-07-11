@@ -3,6 +3,9 @@
 import json
 import sys
 
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from trabalho2 import parsing
 from trabalho2.dataset import Dataset
 from trabalho2.neural_network import NeuralNetwork
