@@ -60,12 +60,12 @@ def test_numeric_gradients(example):
     assert numeric_gradients == example['gradients']
 
 
-def test_total_error(example):
+def test_total_loss(example):
     network, dataset = init_network_and_dataset(example)
     activations = network.propagate(dataset.features)
-    total_error = network.total_error(dataset.expectations, activations[-1])
+    total_loss = network.total_loss(dataset.expectations, activations[-1])
 
-    assert round(total_error, 5) == example['total_error']
+    assert round(total_loss, 5) == example['total_loss']
 
 
 def test_f1_scores_binary():

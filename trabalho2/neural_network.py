@@ -75,7 +75,7 @@ class NeuralNetwork:
                     self.weights[i] -= alpha * z[i]
 
             activations = self.propagate(combined.features)
-            j = self.total_error(combined.expectations, activations[-1])
+            j = self.total_loss(combined.expectations, activations[-1])
 
             if abs(j - prev_j) < mindelta: yield j; break
             prev_j = j
@@ -173,11 +173,11 @@ class NeuralNetwork:
 
                     self.weights[t][n, w] = weight - epsilon
                     predictions = self.propagate(dataset.features)[-1]
-                    j1 = self.total_error(dataset.expectations, predictions)
+                    j1 = self.total_loss(dataset.expectations, predictions)
 
                     self.weights[t][n, w] = weight + epsilon
                     predictions = self.propagate(dataset.features)[-1]
-                    j2 = self.total_error(dataset.expectations, predictions)
+                    j2 = self.total_loss(dataset.expectations, predictions)
 
                     self.weights[t][n, w] = weight
                     gradients[t][n, w] = (j2 - j1) / (2.0 * epsilon)
@@ -192,12 +192,12 @@ class NeuralNetwork:
         Retorna o erro total J e a média dos F1-scores.
         """
         predictions = self.propagate(dataset.features)[-1]
-        j = self.total_error(dataset.expectations, predictions)
+        j = self.total_loss(dataset.expectations, predictions)
         scores = f1_scores(dataset.expectations, predictions)
         return j, np.mean(scores)
 
 
-    def total_error(self, expectations, predictions):
+    def total_loss(self, expectations, predictions):
         """
         Calcula o erro total (J), com regularização.
           - expectations: matriz de saídas esperadas (instâncias nas linhas)
@@ -208,7 +208,7 @@ class NeuralNetwork:
         assert y.shape == f.shape
 
         n = y.shape[1]  # número de instâncias
-        error = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
+        loss = np.sum(-y * np.log(f) - (1.0 - y) * np.log(1.0 - f)) / n
 
         if self.lambda_ == 0.0:
             regularization = 0.0
@@ -218,7 +218,7 @@ class NeuralNetwork:
             sum_squares = sum(np.sum(np.square(theta)) for theta in weights)
             regularization = sum_squares * self.lambda_ / (2.0 * n)
 
-        return error + regularization
+        return loss + regularization
 
 
 def f1_scores(expectations, predictions):
