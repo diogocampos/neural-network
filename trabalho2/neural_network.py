@@ -67,7 +67,7 @@ class NeuralNetwork:
         while True:
             for batch in batches:
                 activations = self.propagate(batch.features)
-                gradients = self._backpropagate(batch.expectations, activations)
+                gradients = self._backpropagate(batch.labels, activations)
 
                 # atualiza os pesos
                 for i in range(len(self.weights)):
@@ -75,7 +75,7 @@ class NeuralNetwork:
                     self.weights[i] -= alpha * z[i]
 
             activations = self.propagate(combined.features)
-            j = self.total_loss(combined.expectations, activations[-1])
+            j = self.total_loss(combined.labels, activations[-1])
 
             if abs(j - prev_j) < mindelta: yield j; break
             prev_j = j
@@ -109,16 +109,16 @@ class NeuralNetwork:
         return activations
 
 
-    def _backpropagate(self, expectations, activations):
+    def _backpropagate(self, labels, activations):
         """
         Calcula os gradientes finais para um conjunto de instâncias.
-          - expectations: matriz de saídas esperadas (instâncias nas linhas)
+          - labels: matriz de saídas esperadas (instâncias nas linhas)
           - activations: lista de matrizes das ativações dos neurônios
             (mesmo formato da saída do método `propagate`)
         Retorna uma lista de matrizes com os gradientes de cada camada,
         com o mesmo formato que a lista de matrizes dos pesos da rede.
         """
-        y = expectations.T
+        y = labels.T
         f = activations[-1].T
         assert y.shape == f.shape
 
@@ -155,7 +155,7 @@ class NeuralNetwork:
         com o mesmo formato que a lista de matrizes dos pesos da rede.
         """
         activations = self.propagate(dataset.features)
-        gradients = self._backpropagate(dataset.expectations, activations)
+        gradients = self._backpropagate(dataset.labels, activations)
         return gradients
 
 
@@ -173,11 +173,11 @@ class NeuralNetwork:
 
                     self.weights[t][n, w] = weight - epsilon
                     predictions = self.propagate(dataset.features)[-1]
-                    j1 = self.total_loss(dataset.expectations, predictions)
+                    j1 = self.total_loss(dataset.labels, predictions)
 
                     self.weights[t][n, w] = weight + epsilon
                     predictions = self.propagate(dataset.features)[-1]
-                    j2 = self.total_loss(dataset.expectations, predictions)
+                    j2 = self.total_loss(dataset.labels, predictions)
 
                     self.weights[t][n, w] = weight
                     gradients[t][n, w] = (j2 - j1) / (2.0 * epsilon)
@@ -192,18 +192,18 @@ class NeuralNetwork:
         Retorna o erro total J e a média dos F1-scores.
         """
         predictions = self.propagate(dataset.features)[-1]
-        j = self.total_loss(dataset.expectations, predictions)
-        scores = f1_scores(dataset.expectations, predictions)
+        j = self.total_loss(dataset.labels, predictions)
+        scores = f1_scores(dataset.labels, predictions)
         return j, np.mean(scores)
 
 
-    def total_loss(self, expectations, predictions):
+    def total_loss(self, labels, predictions):
         """
         Calcula o erro total (J), com regularização.
-          - expectations: matriz de saídas esperadas (instâncias nas linhas)
+          - labels: matriz de saídas esperadas (instâncias nas linhas)
           - predictions: matriz de saídas preditas (ativação da última camada)
         """
-        y = expectations.T
+        y = labels.T
         f = predictions.T
         assert y.shape == f.shape
 
@@ -221,15 +221,15 @@ class NeuralNetwork:
         return loss + regularization
 
 
-def f1_scores(expectations, predictions):
+def f1_scores(labels, predictions):
     """
     Calcula as F1-measures de cada classe.
-      - expectations: matriz de saídas esperadas (instâncias nas linhas)
+      - labels: matriz de saídas esperadas (instâncias nas linhas)
       - predictions: matriz de saídas preditas (ativação da última camada)
     Retorna um np.array de valores, um para cada classe.
     """
-    assert expectations.shape == predictions.shape
-    y = expectations.astype(int)
+    assert labels.shape == predictions.shape
+    y = labels.astype(int)
     f = classify(predictions).astype(int)
 
     with np.errstate(invalid='ignore'):  # ignora divisões 0/0

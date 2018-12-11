@@ -36,7 +36,7 @@ def parse_dataset_file(filename):
     """
     Faz a leitura de arquivos do tipo dataset.txt.
     Retorna uma lista de instâncias de treinamento, na qual cada instância é
-    uma tupla de duas listas: atributos e saídas esperadas.
+    uma tupla de duas listas: atributos e rótulos (saídas esperadas).
     """
 
     with open(filename, 'r') as file:
@@ -44,8 +44,8 @@ def parse_dataset_file(filename):
 
     instances = []
     for line in lines:
-        features, expectations = [vals.split(',') for vals in line.split(';')]
+        features, labels = [vals.split(',') for vals in line.split(';')]
         features = [float(value) for value in features]
-        expectations = [float(value) for value in expectations]
-        instances.append((features, expectations))
+        labels = [float(value) for value in labels]
+        instances.append((features, labels))
     return instances

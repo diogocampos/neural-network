@@ -9,10 +9,10 @@ def test_features(example):
     assert dataset.features.tolist() == [i[0] for i in instances]
 
 
-def test_expectations(example):
+def test_labels(example):
     instances = example['dataset']
     dataset = Dataset(instances)
-    assert dataset.expectations.tolist() == [i[1] for i in instances]
+    assert dataset.labels.tolist() == [i[1] for i in instances]
 
 
 def test_normalize():
@@ -50,7 +50,7 @@ def test_random_folds():
         assert len(fold) == 2
 
         # cada fold deve ter uma instância de cada classe
-        assert fold.expectations[0].tolist() != fold.expectations[1].tolist()
+        assert fold.labels[0].tolist() != fold.labels[1].tolist()
 
 
 def test_join_datasets():
@@ -65,4 +65,4 @@ def test_join_datasets():
     combined = join_datasets([d1, d2])
 
     assert combined.features.tolist() == [[0.], [2.], [4.], [6.]]
-    assert combined.expectations.tolist() == [[1.], [3.], [5.], [7.]]
+    assert combined.labels.tolist() == [[1.], [3.], [5.], [7.]]

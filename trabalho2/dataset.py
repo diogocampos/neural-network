@@ -7,10 +7,10 @@ class Dataset:
         """
         Inicializa um dataset.
           - instances: lista de instâncias de treinamento
-            (cada instância deve ser um par de duas listas: atributos e saídas)
+            (cada instância deve ser um par de duas listas: atributos e rótulos)
         """
         self.features = np.array([i[0] for i in instances])
-        self.expectations = np.array([i[1] for i in instances])
+        self.labels = np.array([i[1] for i in instances])
 
         if normalize:
             maximums = np.max(self.features, axis=0)
@@ -25,7 +25,7 @@ class Dataset:
         return len(self.features[0])
 
     def num_outputs(self):
-        return len(self.expectations[0])
+        return len(self.labels[0])
 
 
     def random_folds(self, num_folds):
@@ -37,11 +37,11 @@ class Dataset:
         # reordena o dataset aleatoriamente
         indexes = np.random.permutation(len(self.features))
         features = self.features[indexes]
-        expectations = self.expectations[indexes]
+        labels = self.labels[indexes]
 
         # separa as instâncias em grupos, por classe
-        classes = np.unique(expectations, axis=0)
-        groups = [np.where(np.all(expectations == c, axis=1)) for c in classes]
+        classes = np.unique(labels, axis=0)
+        groups = [np.where(np.all(labels == c, axis=1)) for c in classes]
 
         # divide cada grupo em `num_folds` pedaços
         groups = [np.array_split(g, num_folds) for (g,) in groups]
@@ -53,7 +53,7 @@ class Dataset:
             indexes = np.concatenate([g[i] for g in groups])
             fold = Dataset([])
             fold.features = features[indexes]
-            fold.expectations = expectations[indexes]
+            fold.labels = labels[indexes]
             folds.append(fold)
 
         return folds
@@ -65,5 +65,5 @@ def join_datasets(datasets):
     """
     combined = Dataset([])
     combined.features = np.concatenate([d.features for d in datasets])
-    combined.expectations = np.concatenate([d.expectations for d in datasets])
+    combined.labels = np.concatenate([d.labels for d in datasets])
     return combined

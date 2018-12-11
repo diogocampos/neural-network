@@ -63,22 +63,22 @@ def test_numeric_gradients(example):
 def test_total_loss(example):
     network, dataset = init_network_and_dataset(example)
     activations = network.propagate(dataset.features)
-    total_loss = network.total_loss(dataset.expectations, activations[-1])
+    total_loss = network.total_loss(dataset.labels, activations[-1])
 
     assert round(total_loss, 5) == example['total_loss']
 
 
 def test_f1_scores_binary():
-    expectations = [ [0.], [1.], [0.], [1.], [0.] ]
+    labels = [ [0.], [1.], [0.], [1.], [0.] ]
     predictions = [ [.9], [.9], [.1], [.9], [.1] ]
     expected_scores = [0.8]
 
-    scores = f1_scores(np.array(expectations), np.array(predictions))
+    scores = f1_scores(np.array(labels), np.array(predictions))
     assert scores.tolist() == expected_scores
 
 
 def test_f1_scores_multiclass():
-    expectations = [
+    labels = [
         [1., 0., 0.],
         [0., 1., 0.],
         [0., 0., 1.],
@@ -90,7 +90,7 @@ def test_f1_scores_multiclass():
     ]
     expected_scores = [1/1.5, 0., 1.]
 
-    scores = f1_scores(np.array(expectations), np.array(predictions))
+    scores = f1_scores(np.array(labels), np.array(predictions))
     assert scores.tolist() == expected_scores
 
 
